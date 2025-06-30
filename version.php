@@ -17,14 +17,14 @@
 /**
  * This file contains the version information for the taskflowadapter_ines plugin
  *
- * @package     taskflowadapter_ines
+ * @package     taskflowadapter_tuines
  * @copyright   2025 Wunderbyte GmbH <info@wunderbyte.at>
  * @author      David Ala
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2025062600;
+$plugin->version   = 2025062601;
 $plugin->requires  = 2024042200; // Requires this Moodle version. Current: Moodle 4.4.
-$plugin->component = 'local_taskflowadapter_tuines';
+$plugin->component = 'taskflowadapter_tuines';
 $plugin->supported = [401, 405];
