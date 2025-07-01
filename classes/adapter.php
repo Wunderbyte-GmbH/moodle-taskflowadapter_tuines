@@ -44,7 +44,7 @@ use stdClass;
  * @copyright 2025 Wunderbyte GmbH
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class external_tuines_api extends external_api_base implements external_api_interface {
+class adapter extends external_api_base implements external_api_interface {
     /** @var array Stores the external user data. */
     protected array $issidmatching = [];
 
