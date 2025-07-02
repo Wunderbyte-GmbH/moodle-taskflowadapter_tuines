@@ -22,4 +22,20 @@
  * @author      David Ala
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+defined('MOODLE_INTERNAL') || die();
+
+$string['apisettings'] = "INES API Settings";
+$string['apisettings_desc'] = "Configure taskflow key-value pairs.";
+$string['choose'] = "Choose...";
+$string['enter_value'] = 'Enter a suitable JSON key for this setting';
+$string['function'] = 'Assign function to userprofilefield: ';
+$string['internalid'] = 'Internal ID';
+$string['jsonkey'] = 'JSON key for userprofilefield: ';
+$string['lessfunctions'] = '<div class="alert alert-danger" role="alert">Not all functions were selected during the last save. This may cause errors.</div>';
+$string['manyfunctions'] = '<div class="alert alert-danger" role="alert">Functions were selected multiple times during the last save. This may cause errors.</div>';
+$string['mappingdescription'] = 'Taskflow key-value pair explanation';
+$string['mappingdescription_desc'] = 'This creates the mapping. The upper field indicates which JSON field is linked to the user profile field. The lower field indicates which function this field represents. Not every user profile field must have a function.';
+$string['pluginname'] = "INES";
+$string['set:function'] = 'Select a function';
+$string['subplugintype_taskflowadapter_plural'] = 'Taskflow adapter extensions';
 $string['tuines'] = "Ines API";
