@@ -28,7 +28,11 @@ namespace taskflowadapter_tuines;
 use admin_setting_configselect;
 use admin_setting_configtext;
 use admin_setting_heading;
+use admin_settingpage;
+use core_external\external_api;
+use local_taskflow\local\external_adapter\external_api_base;
 use local_taskflow\plugininfo\taskflowadapter;
+use stdClass;
 
 
 /**
@@ -78,7 +82,7 @@ class taskflowadapter_tuines extends taskflowadapter {
         foreach ($usercustomfields as $key => $label) {
             $settings->add(
                 new admin_setting_configtext(
-                    self::COMPONENTNAME . '/' . $key,
+                    self::COMPONENTNAME . '/' . 'translator_user_' . $key,
                     get_string('jsonkey', self::COMPONENTNAME) . $label,
                     get_string('enter_value', self::COMPONENTNAME),
                     '',
@@ -87,7 +91,7 @@ class taskflowadapter_tuines extends taskflowadapter {
             );
              $settings->add(
                  new admin_setting_configselect(
-                     self::COMPONENTNAME . '/' . 'function_' . $key,
+                     self::COMPONENTNAME . '/' . $key,
                      get_string('function', self::COMPONENTNAME) . $label,
                      get_string('set:function', self::COMPONENTNAME),
                      "",
@@ -106,5 +110,31 @@ class taskflowadapter_tuines extends taskflowadapter {
                 )
             );
         }
+    }
+    /**
+     * Get the instance of the class for a specific ID.
+     * @param int $userid
+     * @return stdClass
+     */
+    public static function get_supervisor_for_user(int $userid) {
+        global $DB;
+
+        $fieldname = external_api_base::return_shortname_for_functionname(parent::TRANSLATOR_USER_SUPERVISOR);
+        if (empty($fieldname)) {
+            return (object)[];
+        }
+
+        $sql = "SELECT su.*
+                FROM {user} u
+                JOIN {user_info_data} uid ON uid.userid = u.id
+                JOIN {user_info_field} uif ON uif.id = uid.fieldid
+                JOIN {user} su ON su.id = CAST(uid.data AS INT)
+                WHERE u.id = :userid
+                AND uif.shortname = :supervisor";
+        $parms = [
+            'userid' => $userid,
+            'supervisor' => $fieldname,
+        ];
+        return $DB->get_record_sql($sql, $parms, IGNORE_MISSING);
     }
 }
