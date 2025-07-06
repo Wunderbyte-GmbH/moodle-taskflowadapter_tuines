@@ -68,7 +68,7 @@ class adapter extends external_api_base implements external_api_interface {
                     'unitid' => $unitid,
                 ],
             ]);
-            \local_taskflow\observer::call_event_handler($event);
+            $event->trigger();
         }
     }
 
