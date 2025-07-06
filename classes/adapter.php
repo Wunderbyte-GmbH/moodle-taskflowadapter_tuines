@@ -78,7 +78,7 @@ class adapter extends external_api_base implements external_api_interface {
     private function create_or_update_supervisor() {
         foreach ($this->users as $user) {
             $shortname = $this->return_shortname_for_functionname(taskflowadapter::TRANSLATOR_USER_SUPERVISOR);
-            $supervisorid = (int)$user->profile[$shortname];
+            $supervisorid = (int)($user->profile[$shortname] ?? 0);
 
             // Run the error validation on the user data.
             $this->usererror = true;
@@ -109,7 +109,7 @@ class adapter extends external_api_base implements external_api_interface {
      */
     private function create_or_update_users() {
         foreach ($this->externaldata->persons as $newuser) {
-            $jsonkey = $this->return_jsonkey_for_functionname(taskflowadapter::TRANSLATOR_USER_UNITS);
+            $jsonkey = $this->return_jsonkey_for_functionname(taskflowadapter::TRANSLATOR_USER_TARGETGROUP);
             $units = $newuser->$jsonkey;
 
             $this->usererror = true;
@@ -118,17 +118,52 @@ class adapter extends external_api_base implements external_api_interface {
             if (!$this->usererror) {
                 continue;
             }
-            $olduserunits = $this->userrepo->get_user($translateduser, $this);
+
+            // We need to get the old user record.
+            // We need to compare it to the translated user data.
+            // we need to update if necessary.
+
+            if (empty(self::$usersbyemail[$translateduser['email']])) {
+                // If the user does not exist, we create a new one.
+                $olduser = $this->userrepo->get_user_by_mail(
+                    $translateduser['email']
+                );
+            } else {
+                // If the user exists, we get the old user.
+                $olduser = self::$usersbyemail[$translateduser['email']];
+            }
+
+            if ($olduser) {
+                 // We store the user for the whole process.
+                self::$usersbyid[$olduser->id] = $olduser;
+                self::$usersbyemail[$olduser->email] = $olduser;
+
+                $oldtargetgroup = $this->return_value_for_functionname(
+                    taskflowadapter::TRANSLATOR_USER_TARGETGROUP,
+                    $olduser
+                );
+                $oldtargetgroup = json_decode($oldtargetgroup, true);
+            } else {
+                $oldtargetgroup = [];
+            }
+
+            $oldtargetgroup = !empty($oldtargetgroup) ? $oldtargetgroup : [];
+
             $newuser = $this->userrepo->update_or_create($translateduser);
+
             $this->create_user_with_customfields($newuser, $translateduser);
             $externalid = $this->return_value_for_functionname(taskflowadapter::TRANSLATOR_USER_EXTERNALID, $newuser);
+
             $this->issidmatching[$externalid] = $newuser->id;
+
+            $newtargetgroup = $this->return_value_for_functionname(taskflowadapter::TRANSLATOR_USER_TARGETGROUP, $newuser);
             if (
-                is_array($olduserunits)
+                is_array($oldtargetgroup)
+                && is_array($newtargetgroup)
             ) {
                 $this->invalidate_units_on_change(
-                    $olduserunits,
-                    $this->return_value_for_functionname(taskflowadapter::TRANSLATOR_USER_UNITS, $newuser),
+                    $oldtargetgroup,
+                    $newtargetgroup,
                     $newuser->id
                 );
             }
@@ -176,9 +211,9 @@ class adapter extends external_api_base implements external_api_interface {
      */
     private function contract_ended($user) {
         $storedenddate = $this->return_value_for_functionname(
-                taskflowadapter::TRANSLATOR_USER_CONTRACTEND,
-                $user
-            ) ?? '';
+            taskflowadapter::TRANSLATOR_USER_CONTRACTEND,
+            $user
+        ) ?? '';
         $enddate = DateTime::createFromFormat(
             'Y-m-d',
             $storedenddate
@@ -202,8 +237,8 @@ class adapter extends external_api_base implements external_api_interface {
      * @param stdClass $user
      */
     private function create_or_update_unit_members($translateduser, $user) {
-        $unitid = $this->return_shortname_for_functionname(taskflowadapter::TRANSLATOR_USER_UNITS);
-        $unitidarray = $user->profile[$unitid];
+        $unitid = $this->return_shortname_for_functionname(taskflowadapter::TRANSLATOR_USER_TARGETGROUP);
+        $unitidarray = $user->profile[$unitid] ?? '';
 
         if (!is_array($unitidarray)) {
             return; // Ensure we are dealing with an array.
