@@ -78,7 +78,14 @@ class adapter extends external_api_base implements external_api_interface {
     private function create_or_update_supervisor() {
         foreach ($this->users as $user) {
             $shortname = $this->return_shortname_for_functionname(taskflowadapter::TRANSLATOR_USER_SUPERVISOR);
-            $supervisorid = $user->profile[$shortname];
+            $supervisorid = (int)$user->profile[$shortname];
+
+            // Run the error validation on the user data.
+            $this->usererror = true;
+            $this->supervisor_validation($supervisorid);
+            if (!$this->usererror) {
+                continue;
+            }
             if ($supervisorid) {
                 $supervisorinstance = new supervisor($supervisorid, $user->id);
                 $supervisorinstance->set_supervisor_for_user($supervisorid, $shortname, $user, $this->users);
@@ -91,7 +98,7 @@ class adapter extends external_api_base implements external_api_interface {
      */
     private function create_or_update_units() {
         foreach ($this->externaldata->targetGroups as $targetgroup) {
-            $translatedtargetgroup = $this->translate_incoming_target_grous($targetgroup);
+            $translatedtargetgroup = $this->translate_incoming_target_groups($targetgroup);
             $unit = $this->unitrepo->create_unit((object)$translatedtargetgroup);
             $this->unitmapping[$translatedtargetgroup['unitid']] = $unit->get_id();
         }
@@ -102,7 +109,15 @@ class adapter extends external_api_base implements external_api_interface {
      */
     private function create_or_update_users() {
         foreach ($this->externaldata->persons as $newuser) {
+            $jsonkey = $this->return_jsonkey_for_functionname(taskflowadapter::TRANSLATOR_USER_UNITS);
+            $units = $newuser->$jsonkey;
+
+            $this->usererror = true;
+            $this->units_validation($units);
             $translateduser = $this->translate_incoming_data($newuser);
+            if (!$this->usererror) {
+                continue;
+            }
             $olduserunits = $this->userrepo->get_user($translateduser, $this);
             $newuser = $this->userrepo->update_or_create($translateduser);
             $this->create_user_with_customfields($newuser, $translateduser);
@@ -160,13 +175,17 @@ class adapter extends external_api_base implements external_api_interface {
      * @return bool
      */
     private function contract_ended($user) {
+        $storedenddate = $this->return_value_for_functionname(
+                taskflowadapter::TRANSLATOR_USER_CONTRACTEND,
+                $user
+            ) ?? '';
         $enddate = DateTime::createFromFormat(
             'Y-m-d',
-            $this->return_value_for_functionname(
-                taskflowadapter::TRANSLATOR_USER_END,
-                $user
-            ) ?? ''
+            $storedenddate
         );
+
+        $this->dates_validation($enddate, $storedenddate);
+
         $now = new DateTime();
         if (
             $enddate &&
@@ -185,6 +204,10 @@ class adapter extends external_api_base implements external_api_interface {
     private function create_or_update_unit_members($translateduser, $user) {
         $unitid = $this->return_shortname_for_functionname(taskflowadapter::TRANSLATOR_USER_UNITS);
         $unitidarray = $user->profile[$unitid];
+
+        if (!is_array($unitidarray)) {
+            return; // Ensure we are dealing with an array.
+        }
         foreach ($unitidarray as $unitid) {
             if (!empty($this->unitmapping[$unitid])) {
                 $unitmemberinstance =
