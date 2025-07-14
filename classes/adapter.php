@@ -105,9 +105,11 @@ class adapter extends external_api_base implements external_api_interface {
     }
 
     /**
+     *
      * Private constructor to prevent direct instantiation.
      */
     private function create_or_update_users() {
+        external_api_base::$importing = true;
         foreach ($this->externaldata->persons as $newuser) {
             $jsonkey = $this->return_jsonkey_for_functionname(taskflowadapter::TRANSLATOR_USER_TARGETGROUP);
             $units = $newuser->$jsonkey;
