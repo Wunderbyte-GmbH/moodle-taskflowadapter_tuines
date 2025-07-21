@@ -144,7 +144,10 @@ class adapter extends external_api_base implements external_api_interface {
                     taskflowadapter::TRANSLATOR_USER_TARGETGROUP,
                     $olduser
                 );
-                $oldtargetgroup = json_decode($oldtargetgroup, true);
+                if (!is_array($oldtargetgroup)) {
+                    $oldtargetgroup = json_decode($oldtargetgroup, true);
+                }
+
             } else {
                 $oldtargetgroup = [];
             }
