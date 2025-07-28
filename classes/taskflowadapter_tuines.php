@@ -111,13 +111,15 @@ class taskflowadapter_tuines extends taskflowadapter {
                 )
             );
         }
-         $settings->add(new admin_setting_configmultiselect(
-             self::COMPONENTNAME . "/necessaryuserprofilefields",
-             get_string('necessaryuserprofilefields', self::COMPONENTNAME),
-             get_string('necessaryuserprofilefieldsdesc', self::COMPONENTNAME),
-             [],
-             $usercustomfields
-         ));
+        if (adapter::is_allowed_to_react_on_user_events()) {
+            $settings->add(new admin_setting_configmultiselect(
+                self::COMPONENTNAME . "/necessaryuserprofilefields",
+                get_string('necessaryuserprofilefields', self::COMPONENTNAME),
+                get_string('necessaryuserprofilefieldsdesc', self::COMPONENTNAME),
+                [],
+                $usercustomfields
+            ));
+        }
     }
     /**
      * Get the instance of the class for a specific ID.
