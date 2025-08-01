@@ -40,4 +40,6 @@ $string['necessaryuserprofilefieldsdesc'] = "Benutzerprofilfelder, die befüllt 
 $string['pluginname'] = "INES";
 $string['set:function'] = 'Wählen Sie eine Funktion aus';
 $string['subplugintype_taskflowadapter_plural'] = 'Taskflow-Adapter-Erweiterungen';
+$string['targetgroupfields'] = '<i class="fa-solid fa-people-group" aria-hidden="true"></i><strong> Felder für die Einheit </strong>';
 $string['tuines'] = "Ines API";
+$string['usermappingfields'] = '<i class="fa-solid fa-user" aria-hidden="true"></i> <strong> Felder für Benutzer </strong>';

@@ -28,6 +28,7 @@ namespace taskflowadapter_tuines;
 use admin_setting_configmultiselect;
 use admin_setting_configselect;
 use admin_setting_configtext;
+use admin_setting_description;
 use admin_setting_heading;
 use admin_settingpage;
 use core_external\external_api;
@@ -80,6 +81,13 @@ class taskflowadapter_tuines extends taskflowadapter {
         );
         parent::check_functions_usage($usercustomfields, self::COMPONENTNAME, $settings);
         parent::return_setting_special_treatment_fields($settings, self::COMPONENTNAME);
+        $settings->add(
+            new admin_setting_description(
+                self::COMPONENTNAME . '/' . 'usermappingfields',
+                get_string('usermappingfields', self::COMPONENTNAME),
+                "",
+            )
+        );
         foreach ($usercustomfields as $key => $label) {
             $settings->add(
                 new admin_setting_configtext(
@@ -100,6 +108,13 @@ class taskflowadapter_tuines extends taskflowadapter {
                  )
              );
         }
+        $settings->add(
+            new admin_setting_description(
+                self::COMPONENTNAME . '/' . 'targetgroupfields',
+                get_string('targetgroupfields', self::COMPONENTNAME),
+                "",
+            )
+        );
         foreach ($cohortlabelsettings as $key => $label) {
             $settings->add(
                 new admin_setting_configtext(
