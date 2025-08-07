@@ -68,21 +68,10 @@ class editassignment extends dynamic_form {
         $mform->setType('comment_approved', PARAM_TEXT);
 
         // Duedate.
-        $data = $this->_customdata ?? $this->_ajaxformdata ?? [];
-        if (!empty($data['id'])) {
-            $assignment = new assignment($data['id']);
-            $ruledata = json_decode($assignment->rulejson);
-            if (isset($ruledata->rulejson->rule->extensionperiod)) {
-                $extensionperiod = time() + $ruledata->rulejson->rule->extensionperiod;
-            } else {
-                $extensionperiod = time();
-            }
-        } else {
-            $extensionperiod = time();
-        }
-
         $mform->addElement('date_selector', 'duedate', get_string('duedate', 'local_taskflow'));
-        $mform->setDefault('duedate', $extensionperiod);
+        if (isset($extensionperiod)) {
+            $mform->setDefault('duedate', $extensionperiod);
+        }
         $mform->freeze('duedate');
         // Changes should be preserved on automatic update via import.
         $mform->addElement(
@@ -96,7 +85,12 @@ class editassignment extends dynamic_form {
         $mform->addElement('submit', 'extension', get_string('grantextension', 'taskflowadapter_tuines'));
 
         // Deny Extension.
-        $mform->addElement('textarea', 'comment_denied', get_string('comment', 'local_taskflow'), 'wrap="virtual" rows="3" cols="50"');
+        $mform->addElement(
+            'textarea',
+            'comment_denied',
+            get_string('comment', 'local_taskflow'),
+            'wrap="virtual" rows="3" cols="50"'
+        );
         $mform->setType('comment_denied', PARAM_TEXT);
         $mform->addElement('submit', 'declined', get_string('denyextension', 'taskflowadapter_tuines'));
     }
@@ -111,6 +105,15 @@ class editassignment extends dynamic_form {
         $mform = $this->_form;
         $assignment = new assignment($data->id);
         $data->useridmodified = $USER->id;
+        if ($data->actionbutton == 'declined') {
+            $data->duedate = $assignment->duedate;
+            $data->comment = $data->comment_denied;
+            $data->status = assignment_status::STATUS_OVERDUE;
+        }
+        if ($data->actionbutton == 'extension') {
+            $data->comment = $data->comment_approved;
+            $data->status = assignment_status::STATUS_PROLONGED;
+        }
         $assignment->add_or_update_assignment((array)$data, history::TYPE_MANUAL_CHANGE, true);
     }
 
@@ -127,6 +130,11 @@ class editassignment extends dynamic_form {
             $assignmentdata = $assignment->return_class_data();
             if ($assignmentdata) {
                 $data = $assignmentdata;
+                $ruledata = json_decode($assignment->rulejson);
+                if (isset($ruledata->rulejson->rule->extensionperiod)) {
+                    $extensionperiod = (int) $assignment->duedate + (int) $ruledata->rulejson->rule->extensionperiod;
+                    $data->duedate = $extensionperiod;
+                }
             } else {
                 // If no assignment data is found, we initialize an empty array.
                 $data = (object)[];
@@ -149,18 +157,18 @@ class editassignment extends dynamic_form {
         $errors = [];
         if ($data['actionbutton'] == 'extension') {
             if (empty($data['change_reason'])) {
-                $errors['change_reason'] = "WRONG NO CHANGEREASON";
+                $errors['change_reason'] = get_string('change_reason:errorextension');
             }
             if (!empty($data['comment_denied'])) {
-                $errors['comment_denied'] = "WRONG COMMENT";
+                $errors['comment_denied'] = get_string('comment_denied:errorextension');
             }
         }
         if ($data['actionbutton'] == 'declined') {
             if (!empty($data['change_reason'])) {
-                $errors['change_reason'] = "WRONG NO CHANGEREASON ON DENY";
+                $errors['change_reason'] = get_string('change_reason:errordeclined');
             }
-            if (empty($data['change_reason'])) {
-                $errors['comment_denied'] = "WRONG COMMENT MUST BE SET";
+            if (empty($data['comment_denied'])) {
+                $errors['comment_denied'] = get_string('comment_denied:errordeclined');
             }
         }
         return $errors;

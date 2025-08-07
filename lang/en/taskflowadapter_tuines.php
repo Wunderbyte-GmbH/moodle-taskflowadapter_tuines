@@ -27,6 +27,8 @@ defined('MOODLE_INTERNAL') || die();
 $string['apisettings'] = "INES API Settings";
 $string['apisettings_desc'] = "Configure taskflow key-value pairs.";
 $string['choose'] = "Choose...";
+$string['comment_denied:errordeclined'] = "When denying the extension request, a comment must be provided";
+$string['comment_denied:errorextension'] = "When granting an extension, the comment for rejection must be empty";
 $string['denyextension'] = "Deny Extension";
 $string['enter_value'] = 'Enter a suitable JSON key for this setting';
 $string['function'] = 'Assign function to userprofilefield: ';

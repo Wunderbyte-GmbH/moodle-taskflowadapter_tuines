@@ -26,7 +26,11 @@ defined('MOODLE_INTERNAL') || die();
 
 $string['apisettings'] = "INES API Einstellungen";
 $string['apisettings_desc'] = "Konfiguriere Taskflow-Schlüssel-Wert-Paare.";
+$string['change_reason:errordeclined'] = "Bei Ablehnung der Fristverlängerung darf kein Grund ausgewählt werden";
+$string['change_reason:errorextension'] = "Bei Fristverlängerung muss ein Grund ausgewählt werden";
 $string['choose'] = "Wähle...";
+$string['comment_denied:errordeclined'] = "Bei Ablehnung der Fristverlängerung muss der Kommentar ausgefüllt sein";
+$string['comment_denied:errorextension'] = "Bei Fristverlängerung muss der Kommentar für die Ablehnung leer sein";
 $string['denyextension'] = "Verlängerung ablehnen";
 $string['enter_value'] = 'Gib einen passenden JSON- Schlüssel für diese Einstellung ein';
 $string['function'] = 'Funktion zuordnen zu Benutzerprofilfeld: ';
