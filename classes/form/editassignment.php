@@ -51,19 +51,9 @@ class editassignment extends dynamic_form {
         $mform->addElement('hidden', 'actionbutton');
         $mform->setType('actionbutton', PARAM_ALPHANUMEXT);
 
-
-        $statusoptions = assignment_status::get_all();
-        $statusoptions = array_unique($statusoptions);
-        $statusoptions = [ '' => get_string('choose', 'local_taskflow') ] + $statusoptions;
-        // Status ändern.
-        $mform->addElement(
-            'select',
-            'status',
-            get_string('changestatus', 'local_taskflow'),
-            $statusoptions,
-        );
         $mform->setType('status', PARAM_TEXT);
         $changereasonoptions = assignment_status::get_all_changereasons();
+        $changereasonoptions = [ '' => get_string('choose', 'local_taskflow') ] + $changereasonoptions;
         // Reason for change.
         $mform->addElement(
             'select',
@@ -87,10 +77,13 @@ class editassignment extends dynamic_form {
             } else {
                 $extensionperiod = time();
             }
+        } else {
+            $extensionperiod = time();
         }
 
         $mform->addElement('date_selector', 'duedate', get_string('duedate', 'local_taskflow'));
-        $mform->setDefault('duedate', $extensionperiod);        $mform->freeze('duedate');
+        $mform->setDefault('duedate', $extensionperiod);
+        $mform->freeze('duedate');
         // Changes should be preserved on automatic update via import.
         $mform->addElement(
             'advcheckbox',
@@ -116,9 +109,6 @@ class editassignment extends dynamic_form {
         global $USER;
         $data = $this->get_data();
         $mform = $this->_form;
-        if ($data->extension) {
-            echo "do something";
-        }
         $assignment = new assignment($data->id);
         $data->useridmodified = $USER->id;
         $assignment->add_or_update_assignment((array)$data, history::TYPE_MANUAL_CHANGE, true);
@@ -156,9 +146,23 @@ class editassignment extends dynamic_form {
      *
      */
     public function validation($data, $files) {
-        $submitvalues = $this->_form->_submitValues;
         $errors = [];
-
+        if ($data['actionbutton'] == 'extension') {
+            if (empty($data['change_reason'])) {
+                $errors['change_reason'] = "WRONG NO CHANGEREASON";
+            }
+            if (!empty($data['comment_denied'])) {
+                $errors['comment_denied'] = "WRONG COMMENT";
+            }
+        }
+        if ($data['actionbutton'] == 'declined') {
+            if (!empty($data['change_reason'])) {
+                $errors['change_reason'] = "WRONG NO CHANGEREASON ON DENY";
+            }
+            if (empty($data['change_reason'])) {
+                $errors['comment_denied'] = "WRONG COMMENT MUST BE SET";
+            }
+        }
         return $errors;
     }
 
