@@ -48,18 +48,21 @@ class editassignment extends dynamic_form {
         $mform->addElement('hidden', 'userid');
         $mform->setType('userid', PARAM_INT);
 
+        $mform->addElement('hidden', 'actionbutton');
+        $mform->setType('actionbutton', PARAM_ALPHANUMEXT);
+
+
         $statusoptions = assignment_status::get_all();
         $statusoptions = array_unique($statusoptions);
+        $statusoptions = [ '' => get_string('choose', 'local_taskflow') ] + $statusoptions;
         // Status ändern.
         $mform->addElement(
             'select',
             'status',
             get_string('changestatus', 'local_taskflow'),
-            $statusoptions
+            $statusoptions,
         );
         $mform->setType('status', PARAM_TEXT);
-        $mform->addRule('status', null, 'required', null, 'client');
-
         $changereasonoptions = assignment_status::get_all_changereasons();
         // Reason for change.
         $mform->addElement(
@@ -71,12 +74,23 @@ class editassignment extends dynamic_form {
         $mform->setType('change_reason', PARAM_TEXT);
 
         // Comment.
-        $mform->addElement('textarea', 'comment', get_string('comment', 'local_taskflow'), 'wrap="virtual" rows="3" cols="50"');
-        $mform->setType('comment', PARAM_TEXT);
+        $mform->addElement('textarea', 'comment_approved', get_string('comment', 'local_taskflow'), 'wrap="virtual" rows="3" cols="50"');
+        $mform->setType('comment_approved', PARAM_TEXT);
 
         // Duedate.
-        $mform->addElement('date_selector', 'duedate', get_string('duedate', 'local_taskflow'));
+        $data = $this->_customdata ?? $this->_ajaxformdata ?? [];
+        if (!empty($data['id'])) {
+            $assignment = new assignment($data['id']);
+            $ruledata = json_decode($assignment->rulejson);
+            if (isset($ruledata->rulejson->rule->extensionperiod)) {
+                $extensionperiod = time() + $ruledata->rulejson->rule->extensionperiod;
+            } else {
+                $extensionperiod = time();
+            }
+        }
 
+        $mform->addElement('date_selector', 'duedate', get_string('duedate', 'local_taskflow'));
+        $mform->setDefault('duedate', $extensionperiod);        $mform->freeze('duedate');
         // Changes should be preserved on automatic update via import.
         $mform->addElement(
             'advcheckbox',
@@ -85,8 +99,13 @@ class editassignment extends dynamic_form {
             get_string('keepchangesonimport', 'local_taskflow')
         );
         $mform->setDefault('keepchanges', 1);
+        // Submit Extension.
+        $mform->addElement('submit', 'extension', get_string('grantextension', 'taskflowadapter_tuines'));
 
-        $this->add_action_buttons(false);
+        // Deny Extension.
+        $mform->addElement('textarea', 'comment_denied', get_string('comment', 'local_taskflow'), 'wrap="virtual" rows="3" cols="50"');
+        $mform->setType('comment_denied', PARAM_TEXT);
+        $mform->addElement('submit', 'declined', get_string('denyextension', 'taskflowadapter_tuines'));
     }
 
     /**
@@ -97,7 +116,9 @@ class editassignment extends dynamic_form {
         global $USER;
         $data = $this->get_data();
         $mform = $this->_form;
-
+        if ($data->extension) {
+            echo "do something";
+        }
         $assignment = new assignment($data->id);
         $data->useridmodified = $USER->id;
         $assignment->add_or_update_assignment((array)$data, history::TYPE_MANUAL_CHANGE, true);
@@ -122,6 +143,23 @@ class editassignment extends dynamic_form {
             }
         }
         $this->set_data($data);
+    }
+
+
+    /**
+     * Validation for Correct behavior of necessary fields.
+     *
+     * @param array $data
+     * @param mixed $files
+     *
+     * @return array
+     *
+     */
+    public function validation($data, $files) {
+        $submitvalues = $this->_form->_submitValues;
+        $errors = [];
+
+        return $errors;
     }
 
     /**
