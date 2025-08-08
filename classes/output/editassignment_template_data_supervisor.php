@@ -38,7 +38,7 @@ use context_system;
  * @package local_taskflow
  *
  */
-class editassignment_template_data implements editassignment_template_data_interface {
+class editassignment_template_data_supervisor implements editassignment_template_data_interface {
     /**
      * data is the array used for output.
      *
