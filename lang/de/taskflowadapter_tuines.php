@@ -26,13 +26,16 @@ defined('MOODLE_INTERNAL') || die();
 
 $string['apisettings'] = "INES API Einstellungen";
 $string['apisettings_desc'] = "Konfiguriere Taskflow-Schlüssel-Wert-Paare.";
+$string['assignedpackages'] = "Zugewiesene Pakete";
 $string['change_reason:errordeclined'] = "Bei Ablehnung der Fristverlängerung darf kein Grund ausgewählt werden";
 $string['change_reason:errorextension'] = "Bei Fristverlängerung muss ein Grund ausgewählt werden";
 $string['choose'] = "Wähle...";
 $string['comment_denied:errordeclined'] = "Bei Ablehnung der Fristverlängerung muss der Kommentar ausgefüllt sein";
 $string['comment_denied:errorextension'] = "Bei Fristverlängerung muss der Kommentar für die Ablehnung leer sein";
 $string['denyextension'] = "Verlängerung ablehnen";
+$string['denytext'] = "Liegen keine triftigen Gründe für eine Fristverlängerung vor, kann diese abgelehnt werden. Die Angabe einer Begründung für die Ablehnung ist verpflichtend. Achtung: Mitarbeitende, die Standardschulungen nicht fristgerecht absolvieren, müssen mit einer schriftlichen Verwarnung und entsprechenden arbeitsrechtlichen Konsequenzen rechnen.";
 $string['enter_value'] = 'Gib einen passenden JSON- Schlüssel für diese Einstellung ein';
+$string['extensiontext'] = 'Wenn entsprechende triftige Gründe vorliegen, sodass Mitarbeitende die Standardschulung nicht innerhalb der vorgesehenen Frist ablegen können, haben Vorgesetzte die Möglichkeit, die Frist einmalig zu verlängern. Die verpflichtende Angabe eines Grundes ist hierfür erforderlich.';
 $string['function'] = 'Funktion zuordnen zu Benutzerprofilfeld: ';
 $string['grantextension'] = "Frist verlängern";
 $string['internalid'] = 'Interne-ID';

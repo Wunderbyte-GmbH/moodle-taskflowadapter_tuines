@@ -26,6 +26,7 @@ namespace taskflowadapter_tuines\form;
 
 use context_system;
 use core_form\dynamic_form;
+use html_writer;
 use local_taskflow\local\assignments\assignment;
 use local_taskflow\local\assignments\status\assignment_status;
 use local_taskflow\local\history\history;
@@ -50,7 +51,11 @@ class editassignment extends dynamic_form {
 
         $mform->addElement('hidden', 'actionbutton');
         $mform->setType('actionbutton', PARAM_ALPHANUMEXT);
-
+        $mform->addElement('header', 'extensionheader', get_string('grantextension', 'taskflowadapter_tuines'));
+        $mform->addElement('html', '<br>');
+        $mform->addElement('html', html_writer::div(get_string('denytext', 'taskflowadapter_tuines')));
+        $mform->addElement('html', '<br>');
+        $mform->setExpanded('extensionheader', false);
         $mform->setType('status', PARAM_TEXT);
         $changereasonoptions = assignment_status::get_all_changereasons();
         $changereasonoptions = [ '' => get_string('choose', 'local_taskflow') ] + $changereasonoptions;
@@ -59,12 +64,20 @@ class editassignment extends dynamic_form {
             'select',
             'change_reason',
             get_string('changereason', 'local_taskflow'),
-            $changereasonoptions
+            $changereasonoptions,
         );
-        $mform->setType('change_reason', PARAM_TEXT);
 
+        $mform->setType('change_reason', PARAM_TEXT);
         // Comment.
-        $mform->addElement('textarea', 'comment_approved', get_string('comment', 'local_taskflow'), 'wrap="virtual" rows="3" cols="50"');
+        $mform->addElement(
+            'textarea',
+            'comment_approved',
+            get_string(
+                'comment',
+                'local_taskflow'
+            ),
+            'wrap="virtual" rows="3" cols="50"'
+        );
         $mform->setType('comment_approved', PARAM_TEXT);
 
         // Duedate.
@@ -83,8 +96,12 @@ class editassignment extends dynamic_form {
         $mform->setDefault('keepchanges', 1);
         // Submit Extension.
         $mform->addElement('submit', 'extension', get_string('grantextension', 'taskflowadapter_tuines'));
-
-        // Deny Extension.
+         // Deny Extension.
+        $mform->addElement('header', 'denyheader', get_string('denyextension', 'taskflowadapter_tuines'));
+        $mform->setExpanded('denyheader', false);
+        $mform->addElement('html', '<br>');
+        $mform->addElement('html', html_writer::div(get_string('denytext', 'taskflowadapter_tuines')));
+        $mform->addElement('html', '<br>');
         $mform->addElement(
             'textarea',
             'comment_denied',
@@ -157,18 +174,18 @@ class editassignment extends dynamic_form {
         $errors = [];
         if ($data['actionbutton'] == 'extension') {
             if (empty($data['change_reason'])) {
-                $errors['change_reason'] = get_string('change_reason:errorextension');
+                $errors['change_reason'] = get_string('change_reason:errorextension', 'taskflowadapter_tuines');
             }
             if (!empty($data['comment_denied'])) {
-                $errors['comment_denied'] = get_string('comment_denied:errorextension');
+                $errors['comment_denied'] = get_string('comment_denied:errorextension', 'taskflowadapter_tuines');
             }
         }
         if ($data['actionbutton'] == 'declined') {
             if (!empty($data['change_reason'])) {
-                $errors['change_reason'] = get_string('change_reason:errordeclined');
+                $errors['change_reason'] = get_string('change_reason:errordeclined', 'taskflowadapter_tuines');
             }
             if (empty($data['comment_denied'])) {
-                $errors['comment_denied'] = get_string('comment_denied:errordeclined');
+                $errors['comment_denied'] = get_string('comment_denied:errordeclined', 'taskflowadapter_tuines');
             }
         }
         return $errors;

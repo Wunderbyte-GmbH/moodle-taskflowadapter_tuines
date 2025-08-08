@@ -26,11 +26,14 @@ defined('MOODLE_INTERNAL') || die();
 
 $string['apisettings'] = "INES API Settings";
 $string['apisettings_desc'] = "Configure taskflow key-value pairs.";
+$string['assignedpackages'] = "Assigned Packages";
 $string['choose'] = "Choose...";
 $string['comment_denied:errordeclined'] = "When denying the extension request, a comment must be provided";
 $string['comment_denied:errorextension'] = "When granting an extension, the comment for rejection must be empty";
 $string['denyextension'] = "Deny Extension";
+$string['denytext'] = "If there are no valid reasons for extending the deadline, the request may be denied. Providing a justification for the denial is mandatory. Attention: Employees who fail to complete the standard training within the prescribed timeframe may receive a written warning and face corresponding employment-related consequences.";
 $string['enter_value'] = 'Enter a suitable JSON key for this setting';
+$string['extensiontext'] = 'If there are valid and compelling reasons preventing employees from completing the standard training within the prescribed timeframe, supervisors may extend the deadline once. Providing a reason is mandatory for this extension.';
 $string['function'] = 'Assign function to userprofilefield: ';
 $string['grantextension'] = "Grant Extension";
 $string['internalid'] = 'Internal ID';
