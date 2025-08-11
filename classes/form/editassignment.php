@@ -131,6 +131,14 @@ class editassignment extends dynamic_form {
             $data->comment = $data->comment_approved;
             $data->status = assignment_status::STATUS_PROLONGED;
         }
+        // Unset all the Data properties not needed.
+        unset($data->actionbutton, $data->comment_approved, $data->comment_denied);
+        // Unset all the expanded properties.
+        foreach ($data as $key => $value) {
+            if (strpos($key, '_isexpanded_')) {
+                unset($data->$key);
+            }
+        }
         $assignment->add_or_update_assignment((array)$data, history::TYPE_MANUAL_CHANGE, true);
     }
 
