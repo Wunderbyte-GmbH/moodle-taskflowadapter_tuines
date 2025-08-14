@@ -26,6 +26,7 @@
 namespace taskflowadapter_tuines\output;
 
 use local_taskflow\local\assignments\assignment;
+use local_taskflow\local\assignments\status\assignment_status;
 use local_taskflow\output\editassignment_template_data_interface;
 use local_taskflow\local\supervisor\supervisor;
 use local_taskflow\output\history;
@@ -87,18 +88,9 @@ class editassignment_template_data_supervisor implements editassignment_template
                 'label' => get_string('assigneddate', 'local_taskflow'),
                 'returnvalue' => fn($value) => userdate($value),
             ],
-            'active' => [
+            'status' => [
                 'label' => get_string('status'),
-                'returnvalue' => function ($value) {
-                    switch ($value) {
-                        case 1:
-                            return get_string('active');
-                        case 0:
-                            return get_string('inactive');
-                        default:
-                            return get_string('unknown');
-                    }
-                },
+                'returnvalue' => fn($value) => assignment_status::get_label($value),
             ],
             'usermodified' => [
                 'label' => get_string('usermodified', 'local_taskflow'),
@@ -114,7 +106,8 @@ class editassignment_template_data_supervisor implements editassignment_template
                     $targets = json_decode($assignment->targets);
                     $collecttargets = [];
                     foreach ($targets as $target) {
-                         $collecttargets[] = $target->targetname . " " . $target->completionstatus;
+                         $collecttargets[] = $target->targetname . " ("
+                         . assignment_status::get_label($target->completionstatus) . ")";
                     }
                     return implode("<br>", $collecttargets);
                 },
