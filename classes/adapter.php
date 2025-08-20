@@ -150,7 +150,7 @@ class adapter extends external_api_base implements external_api_interface {
             } else {
                 $oldtargetgroup = [];
             }
-
+            $oldonlongleave = empty($olduser) ? null : $this->return_value_for_functionname(taskflowadapter::TRANSLATOR_USER_LONG_LEAVE, $olduser);
             $oldtargetgroup = !empty($oldtargetgroup) ? $oldtargetgroup : [];
 
             $newuser = $this->userrepo->update_or_create($translateduser);
@@ -177,10 +177,31 @@ class adapter extends external_api_base implements external_api_interface {
                 $onlongleave
             ) {
                 assignments_facade::set_all_assignments_inactive($newuser->id);
+            } else if ($this->on_longleave_change($oldonlongleave, $onlongleave)) {
+                assignments_facade::set_all_assignments_active($newuser->id);
             } else {
                 self::create_or_update_unit_members($translateduser, $newuser);
             }
         }
+    }
+
+    /**
+     * Private constructor to prevent direct instantiation.
+     * @param int $oldonlongleave
+     * @param int $onlongleave
+     * @return bool
+     */
+    private function on_longleave_change(
+        $oldonlongleave,
+        $onlongleave
+    ) {
+        if (
+            is_number($oldonlongleave) &&
+            $oldonlongleave != $onlongleave
+        ) {
+            return true;
+        }
+        return false;
     }
 
     /**
