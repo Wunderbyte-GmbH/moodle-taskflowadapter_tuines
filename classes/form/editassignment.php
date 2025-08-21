@@ -157,7 +157,11 @@ class editassignment extends dynamic_form {
                 $data = $assignmentdata;
                 $ruledata = json_decode($assignment->rulejson);
                 if (isset($ruledata->rulejson->rule->extensionperiod)) {
-                    $extensionperiod = (int) $assignment->duedate + (int) $ruledata->rulejson->rule->extensionperiod;
+                    if ($assignment->duedate <= strtotime('now')) {
+                        $extensionperiod = (int) $assignment->duedate + (int) $ruledata->rulejson->rule->extensionperiod;
+                    } else {
+                        $extensionperiod = strtotime('today 23:59') + (int) $ruledata->rulejson->rule->extensionperiod;
+                    }
                     $data->duedate = $extensionperiod;
                 }
             } else {
