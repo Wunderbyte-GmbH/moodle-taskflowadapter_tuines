@@ -150,7 +150,8 @@ class adapter extends external_api_base implements external_api_interface {
             } else {
                 $oldtargetgroup = [];
             }
-            $oldonlongleave = empty($olduser) ? null : $this->return_value_for_functionname(taskflowadapter::TRANSLATOR_USER_LONG_LEAVE, $olduser);
+            $oldonlongleave = empty($olduser) ? null :
+                $this->return_value_for_functionname(taskflowadapter::TRANSLATOR_USER_LONG_LEAVE, $olduser);
             $oldtargetgroup = !empty($oldtargetgroup) ? $oldtargetgroup : [];
 
             $newuser = $this->userrepo->update_or_create($translateduser);
