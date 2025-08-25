@@ -52,3 +52,5 @@ $string['subplugintype_taskflowadapter_plural'] = 'Taskflow-Adapter-Erweiterunge
 $string['targetgroupfields'] = '<i class="fa-solid fa-people-group" aria-hidden="true"></i><strong> Felder für die Einheit </strong>';
 $string['tuines'] = "Ines API";
 $string['usermappingfields'] = '<i class="fa-solid fa-user" aria-hidden="true"></i> <strong> Felder für Benutzer </strong>';
+$string['usingprolongedstate'] = 'Verwende Verlängert Status';
+$string['usingprolongedstate_desc'] = 'Verwende Verlängert Status um erstmaliges Überschreiten des Fälligkeitsdatums zu markieren';

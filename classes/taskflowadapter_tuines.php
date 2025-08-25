@@ -25,6 +25,7 @@
 
 namespace taskflowadapter_tuines;
 
+use admin_setting_configcheckbox;
 use admin_setting_configmultiselect;
 use admin_setting_configselect;
 use admin_setting_configtext;
@@ -135,6 +136,13 @@ class taskflowadapter_tuines extends taskflowadapter {
                 $usercustomfields
             ));
         }
+
+        $settings->add(new admin_setting_configcheckbox(
+            self::COMPONENTNAME . "/usingprolongedstate",
+            get_string('usingprolongedstate', self::COMPONENTNAME),
+            get_string('usingprolongedstate_desc', self::COMPONENTNAME),
+            0
+        ));
     }
     /**
      * Get the instance of the class for a specific ID.
