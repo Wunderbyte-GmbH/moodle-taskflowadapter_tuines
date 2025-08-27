@@ -143,6 +143,14 @@ class taskflowadapter_tuines extends taskflowadapter {
             get_string('usingprolongedstate_desc', self::COMPONENTNAME),
             0
         ));
+
+        $settings->add(new admin_setting_configtext(
+            self::COMPONENTNAME . '/dwhurl',
+            get_string('dwhurl', self::COMPONENTNAME),
+            get_string('dwhurl_desc', self::COMPONENTNAME),
+            '',
+            PARAM_URL
+        ));
     }
     /**
      * Get the instance of the class for a specific ID.
