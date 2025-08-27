@@ -42,20 +42,20 @@ class fetch_dwh_data extends scheduled_task {
 
     /**
      * Triggered when a user profile field is deleted.
-     * @return void;
+     * @return string;
      */
     public function execute() {
-        $url = get_config('local_taskflow', 'dwhurl');
+        $url = get_config('taskflowadapter_tuines', 'dwhurl');
         if (empty($url)) {
             $this->log_cli(get_string('fetchdwhurl', 'local_taskflow'));
-            return;
+            return get_string('fetchdwhurl', 'local_taskflow');
         }
 
         $curl = new \curl();
         $response = $curl->get($url);
         if ($curl->get_errno()) {
             $this->log_cli(get_string('fetchdwhurlerror', 'local_taskflow', $curl->error));
-            return;
+            return get_string('fetchdwhurlerror', 'local_taskflow', $curl->error);
         }
 
         $start = microtime(true);
@@ -67,6 +67,9 @@ class fetch_dwh_data extends scheduled_task {
             get_string('fetchdwhurlresponse', 'local_taskflow', $url) .
             get_string('executiontime', 'local_taskflow', sprintf('%.4f', $elapsed))
         );
+        return get_string('fetchdwhurlresponse', 'local_taskflow', $url) .
+            get_string('executiontime', 'local_taskflow', sprintf('%.4f', $elapsed)) .
+            ' Response: ' . substr($response, 0, 50);
     }
 
     /**
