@@ -28,7 +28,6 @@ namespace taskflowadapter_tuines;
 use DateTime;
 use local_taskflow\event\unit_updated;
 use local_taskflow\local\assignments\assignments_facade;
-use local_taskflow\local\external_adapter\adapters\external_api_user_data;
 use local_taskflow\local\supervisor\supervisor;
 use local_taskflow\plugininfo\taskflowadapter;
 
@@ -58,10 +57,13 @@ class adapter extends external_api_base implements external_api_interface {
         $this->create_or_update_users();
         $this->create_or_update_supervisor();
         $this->save_all_user_infos($this->users);
-        $securitymanager = new security_check(
+        $securitymanager = new Security_Check(
             $this->users
         );
-        $securitymanager->user_check($this->return_shortname_for_functionname(taskflowadapter::TRANSLATOR_USER_EXTERNALID));
+        $securitymanager->user_check(
+            $this->return_shortname_for_functionname(taskflowadapter::TRANSLATOR_USER_EXTERNALID),
+            $this->return_shortname_for_functionname(taskflowadapter::TRANSLATOR_USER_CONTRACTEND)
+        );
 
         // Trigger unit update.
         foreach ($this->unitmapping as $unitid) {

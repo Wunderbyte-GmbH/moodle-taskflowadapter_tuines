@@ -25,19 +25,11 @@
 
 namespace taskflowadapter_tuines;
 
-use DateTime;
-use local_taskflow\event\unit_updated;
 use local_taskflow\local\assignments\assignments_facade;
-use local_taskflow\local\external_adapter\adapters\external_api_user_data;
-use local_taskflow\local\supervisor\supervisor;
-use local_taskflow\plugininfo\taskflowadapter;
+use local_taskflow\local\assignments\status\assignment_status;
 
 defined('MOODLE_INTERNAL') || die();
 require_once($CFG->dirroot . '/cohort/lib.php');
-
-use local_taskflow\local\external_adapter\external_api_interface;
-use local_taskflow\local\external_adapter\external_api_base;
-use stdClass;
 
 /**
  * Class unit
@@ -46,12 +38,13 @@ use stdClass;
  * @copyright 2025 Wunderbyte GmbH
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class security_check {
+class Security_Check {
     /** @var array Stores the external user data. */
     protected array $users = [];
 
     /**
      * Private constructor to prevent direct instantiation.
+     * @param array $users
      */
     public function __construct($users) {
         $this->users = $users;
@@ -60,15 +53,29 @@ class security_check {
     /**
      * Creates Supervisor with internalid in customfield.
      * @param string $adapterfield
+     * @return void
      */
-    public function user_check($adapterfield) {
+    public function user_check($adapterfield, $contractendfield) {
         $missingpersons = $this->get_missing_persons($adapterfield);
+        foreach ($missingpersons as $missingperson) {
+            profile_load_custom_fields($missingperson);
+            if (
+                isset($missingperson->profile[$contractendfield]) &&
+                $missingperson->profile[$contractendfield] < time()
+            ) {
+                assignments_facade::set_all_assignments_of_user_to_status(
+                    $missingperson->id,
+                    assignment_status::STATUS_DROPPED_OUT
+                );
+            }
+        }
         return;
     }
 
     /**
      * Creates Supervisor with internalid in customfield.
      * @param string $adapterfield
+     * @return array
      */
     private function get_missing_persons($adapterfield) {
         global $DB;
