@@ -30,16 +30,17 @@ use local_taskflow\local\assignments\status\assignment_status;
 use local_taskflow\output\editassignment_template_data_interface;
 use local_taskflow\local\supervisor\supervisor;
 use local_taskflow\output\history;
+use taskflowadapter_tuines\form\editassignment;
 use renderer_base;
 use context_system;
-use taskflowadapter_tuines\form\editassignment_supervisor;
+use taskflowadapter_tuines\form\editassignment_admin;
 
 /**
  * Display this element
  * @package local_taskflow
  *
  */
-class editassignment_template_data_supervisor implements editassignment_template_data_interface {
+class editassignment_template_data_admin implements editassignment_template_data_interface {
     /**
      * data is the array used for output.
      *
@@ -113,6 +114,8 @@ class editassignment_template_data_supervisor implements editassignment_template
                 },
             ],
         ];
+
+        $assignment = new assignment($data['id']);
         $supervisor = supervisor::get_supervisor_for_user($assignment->userid);
         $this->data['assignmentdata'] = [];
 
@@ -126,15 +129,13 @@ class editassignment_template_data_supervisor implements editassignment_template
         $hascapability = has_capability('local/taskflow:viewassignment', context_system::instance());
 
         if (
-            ($supervisor->id ?? -1) == $USER->id
-            && !$assignment->overduecounter > 0
-            && !$assignment->prolongedcounter > 1
+            $hascapability
         ) {
             // We create the Form to edit the element. The Forms are stored in the Taskflowadapters.
 
-            $form = new editassignment_supervisor(
+            $form = new editassignment_admin(
                 null,
-                null,
+                ['capability' => $hascapability, 'assignmentid' => $assignment->id],
                 'post',
                 '',
                 [],
@@ -143,17 +144,17 @@ class editassignment_template_data_supervisor implements editassignment_template
                     'id' => $assignment->id,
                 ]
             );
-            $classname = "\\\\taskflowadapter_tuines\\\\form\\\\editassignment_supervisor";
+            $classname = "\\\\taskflowadapter_tuines\\\\form\\\\editassignment_admin";
             $form->set_data_for_dynamic_submission();
             $this->data['adapter'] = $classname;
             $this->data['editassignmentform'] = $form->render();
         }
         $this->data['id'] = $assignment->id;
 
-        // $historydata = new history($assignment->id);
-        // /** @var \local_taskflow\output\renderer $renderer */
-        // $renderer = $PAGE->get_renderer('local_taskflow');
-        // $this->data['historylist'] = $renderer->render_history($historydata);
+        $historydata = new history($assignment->id);
+        /** @var \local_taskflow\output\renderer $renderer */
+        $renderer = $PAGE->get_renderer('local_taskflow');
+        $this->data['historylist'] = $renderer->render_history($historydata);
     }
 
     /**

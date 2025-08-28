@@ -34,7 +34,7 @@ use local_taskflow\local\history\history;
 /**
  * Demo step 1 form.
  */
-class editassignment extends dynamic_form {
+class editassignment_supervisor extends dynamic_form {
     /**
      * Definition.
      * @return void
@@ -48,6 +48,12 @@ class editassignment extends dynamic_form {
 
         $mform->addElement('hidden', 'userid');
         $mform->setType('userid', PARAM_INT);
+
+        $mform->addElement('hidden', 'overduecounter');
+        $mform->setType('overduecounter', PARAM_INT);
+
+        $mform->addElement('hidden', 'prolongedcounter');
+        $mform->setType('prolongedcounter', PARAM_INT);
 
         $mform->addElement('hidden', 'actionbutton');
         $mform->setType('actionbutton', PARAM_ALPHANUMEXT);
@@ -66,7 +72,6 @@ class editassignment extends dynamic_form {
             get_string('changereason', 'local_taskflow'),
             $changereasonoptions,
         );
-
         $mform->setType('change_reason', PARAM_TEXT);
         // Comment.
         $mform->addElement(
