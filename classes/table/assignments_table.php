@@ -109,7 +109,7 @@ class assignments_table extends \local_taskflow\table\assignments_table {
      * @return string
      *
      */
-    public function col_test_moodleid($values) {
+    public function col_testmoodleid($values) {
         return $values->userid;
     }
 
