@@ -29,7 +29,6 @@ use local_taskflow\local\assignments\assignment;
 use local_taskflow\local\assignments\status\assignment_status;
 use local_taskflow\output\editassignment_template_data_interface;
 use local_taskflow\local\supervisor\supervisor;
-use local_taskflow\output\history;
 use renderer_base;
 use context_system;
 use taskflowadapter_tuines\form\editassignment_supervisor;
@@ -149,11 +148,6 @@ class editassignment_template_data_supervisor implements editassignment_template
             $this->data['editassignmentform'] = $form->render();
         }
         $this->data['id'] = $assignment->id;
-
-        // $historydata = new history($assignment->id);
-        // /** @var \local_taskflow\output\renderer $renderer */
-        // $renderer = $PAGE->get_renderer('local_taskflow');
-        // $this->data['historylist'] = $renderer->render_history($historydata);
     }
 
     /**

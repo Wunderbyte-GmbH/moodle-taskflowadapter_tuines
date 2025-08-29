@@ -53,6 +53,7 @@ class Security_Check {
     /**
      * Creates Supervisor with internalid in customfield.
      * @param string $adapterfield
+     * @param string $contractendfield
      * @return void
      */
     public function user_check($adapterfield, $contractendfield) {
