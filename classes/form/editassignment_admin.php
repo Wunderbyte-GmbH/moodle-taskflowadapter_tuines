@@ -116,7 +116,7 @@ class editassignment_admin extends dynamic_form {
 
         $assignment = new assignment($data->id);
         $data->useridmodified = $USER->id;
-        $assignment->add_or_update_assignment((array)$data, \local_taskflow\local\history\history::TYPE_MANUAL_CHANGE, true);
+        $assignment->add_or_update_assignment((array)$data, history::TYPE_MANUAL_CHANGE, true);
     }
 
     /**
