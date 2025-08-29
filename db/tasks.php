@@ -27,7 +27,7 @@ defined('MOODLE_INTERNAL') || die();
 
 $tasks = [
     [
-        'classname' => 'local_taskflowadapter_tuines\task\fetch_dwh_data',
+        'classname' => '\taskflowadapter_tuines\task\fetch_dwh_data',
         'blocking'  => 0,
         'minute'    => '0',
         'hour'      => '3',
