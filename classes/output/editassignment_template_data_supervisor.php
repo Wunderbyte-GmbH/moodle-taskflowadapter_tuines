@@ -112,6 +112,7 @@ class editassignment_template_data_supervisor implements editassignment_template
                 },
             ],
         ];
+        $assignment = new assignment($data['id']);
         $supervisor = supervisor::get_supervisor_for_user($assignment->userid);
         $this->data['assignmentdata'] = [];
 

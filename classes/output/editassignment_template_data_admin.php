@@ -135,7 +135,7 @@ class editassignment_template_data_admin implements editassignment_template_data
 
             $form = new editassignment_admin(
                 null,
-                ['capability' => $hascapability, 'assignmentid' => $assignment->id],
+                null,
                 'post',
                 '',
                 [],
