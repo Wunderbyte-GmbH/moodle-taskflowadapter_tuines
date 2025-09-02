@@ -30,6 +30,7 @@ use local_taskflow\local\assignments\status\assignment_status;
 use local_taskflow\output\editassignment_template_data_interface;
 use local_taskflow\local\supervisor\supervisor;
 use local_taskflow\output\history;
+use taskflowadapter_tuines\form\comment_form;
 use taskflowadapter_tuines\form\editassignment;
 use renderer_base;
 use context_system;
@@ -148,6 +149,19 @@ class editassignment_template_data_admin implements editassignment_template_data
             $form->set_data_for_dynamic_submission();
             $this->data['adapter'] = $classname;
             $this->data['editassignmentform'] = $form->render();
+
+             $commentform = new comment_form(
+                 null,
+                 null,
+                 'post',
+                 '',
+                 [],
+                 true,
+                 ['id' => $assignment->id, 'userid' => $USER->id]
+             );
+            $commentform->set_data_for_dynamic_submission();
+            $this->data['hascommentform'] = true;
+            $this->data['commentform'] = $commentform->render();
         }
         $this->data['id'] = $assignment->id;
         $historydata = new history($assignment->id);
