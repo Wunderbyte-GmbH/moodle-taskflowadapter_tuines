@@ -26,6 +26,7 @@
 namespace taskflowadapter_tuines\table;
 use context_system;
 use html_writer;
+use local_taskflow\local\assignments\assignment;
 use local_taskflow\local\external_adapter\external_api_base;
 use local_taskflow\local\supervisor\supervisor;
 use local_taskflow\plugininfo\taskflowadapter;
@@ -60,9 +61,10 @@ class assignments_table extends \local_taskflow\table\assignments_table {
         $data = [];
         $supervisor = supervisor::get_supervisor_for_user($values->userid ?? 0);
         $hascapability = has_capability('local/taskflow:editassignment', context_system::instance());
+        $assignment = new assignment($values->id);
         if (
             $hascapability ||
-            ($supervisor->id ?? -1) === $USER->id
+            (($supervisor->id ?? -1) === $USER->id && $this->is_allowed_to_edit($assignment))
         ) {
             $returnurl = $PAGE->url;
             $returnurlout = $returnurl->out(false);
@@ -126,5 +128,20 @@ class assignments_table extends \local_taskflow\table\assignments_table {
         $externalidfield = external_api_base::return_shortname_for_functionname(taskflowadapter::TRANSLATOR_USER_EXTERNALID);
         $externalid = $customfields->$externalidfield;
         return html_writer::link("https://tiss.tuwien.ac.at/person/$externalid.html", $values->fullname);
+    }
+
+    /**
+     * A supervisor is only allowed to edit when the overduecounter is <= 1 and the prolonged counter is <= 2.
+     *
+     * @param object $assignment
+     *
+     * @return boolean
+     *
+     */
+    private function is_allowed_to_edit(object $assignment) {
+        if ($assignment->overduecounter <= 1 && $assignment->prolongedcounter <= 2) {
+            return true;
+        }
+        return false;
     }
 }

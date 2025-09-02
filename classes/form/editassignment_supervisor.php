@@ -135,6 +135,7 @@ class editassignment_supervisor extends dynamic_form {
         if ($data->actionbutton == 'extension') {
             $data->comment = $data->comment_approved;
             $data->status = assignment_status::STATUS_PROLONGED;
+            $data->prolongedcounter++;
         }
         // Unset all the Data properties not needed.
         unset($data->actionbutton, $data->comment_approved, $data->comment_denied);

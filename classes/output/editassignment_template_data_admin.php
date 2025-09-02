@@ -150,7 +150,6 @@ class editassignment_template_data_admin implements editassignment_template_data
             $this->data['editassignmentform'] = $form->render();
         }
         $this->data['id'] = $assignment->id;
-
         $historydata = new history($assignment->id);
         /** @var \local_taskflow\output\renderer $renderer */
         $renderer = $PAGE->get_renderer('local_taskflow');

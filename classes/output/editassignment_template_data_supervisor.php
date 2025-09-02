@@ -127,8 +127,7 @@ class editassignment_template_data_supervisor implements editassignment_template
 
         if (
             ($supervisor->id ?? -1) == $USER->id
-            && !$assignment->overduecounter > 0
-            && !$assignment->prolongedcounter > 1
+            || $hascapability
         ) {
             // We create the Form to edit the element. The Forms are stored in the Taskflowadapters.
 

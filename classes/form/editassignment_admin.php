@@ -116,6 +116,12 @@ class editassignment_admin extends dynamic_form {
 
         $assignment = new assignment($data->id);
         $data->useridmodified = $USER->id;
+        if ($data->status == assignment_status::STATUS_PROLONGED) {
+            $data->prolongedcounter++;
+        }
+        if ($data->status == assignment_status::STATUS_OVERDUE) {
+            $data->overduecounter++;
+        }
         $assignment->add_or_update_assignment((array)$data, history::TYPE_MANUAL_CHANGE, true);
     }
 
