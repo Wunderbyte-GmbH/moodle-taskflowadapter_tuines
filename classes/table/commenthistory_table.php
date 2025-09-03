@@ -58,9 +58,9 @@ class commenthistory_table extends wunderbyte_table {
      * @return string
      *
      */
-    public function col_timemodified($values): string {
+    public function col_timecreated($values): string {
         $jsonobject = json_decode($values->data);
-        return userdate($jsonobject->data->timemodified ?? 0, get_string('strftimedatetime', 'langconfig'));
+        return userdate($values->timecreated ?? 0, get_string('strftimedatetime', 'langconfig'));
     }
     /**
      * Returns the comment of the user.

@@ -57,8 +57,8 @@ class comment_history implements renderable, templatable {
         $table = new commenthistory_table('taskflowadapter_tuines_commenthistory' . $userid . '_' . $assignmentid);
 
         $columns = [
+            'timecreated' => get_string('date', 'local_taskflow'),
             'comment' => get_string('comment', 'local_taskflow'),
-            'timemodified' => get_string('date', 'local_taskflow'),
             'createdby' => get_string('usermodified', 'local_taskflow'),
         ];
 
@@ -71,13 +71,11 @@ class comment_history implements renderable, templatable {
             \local_taskflow\local\history\history::return_sql($assignmentid, $userid, history::TYPE_MANUAL_CHANGE, $limit, true);
 
         $table->set_sql($select, $from, $where, $params);
-
-        $table->sort_default_column = 'timemodified';
+        $table->define_cache('taskflowadapter_tuines', 'commenthistorylist');
+        $table->sort_default_column = 'timecreated';
         $table->sort_default_order = SORT_DESC;
 
         $table->pageable(true);
-        $table->showrowcountselect = true;
-
         $html = $table->outhtml(5, true);
         $data['table'] = $html;
 
