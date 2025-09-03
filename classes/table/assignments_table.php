@@ -92,12 +92,11 @@ class assignments_table extends \local_taskflow\table\assignments_table {
      *
      */
     public function col_comment($values) {
-        $jsonobject = json_decode($values->data) ?? [];
-        if (empty($jsonobject->data->comment)) {
+        if (empty($values->annotation)) {
             $comment = "-";
         } else {
             $readabletime = userdate($values->timemodified, '%d.%m.%Y %H:%M');
-            $comment = $readabletime . "; " . $jsonobject->data->comment;
+            $comment = $readabletime . "; " . $values->annotation;
         }
         $shortcomment = shorten_text($comment, 200);
         return html_writer::div($shortcomment, '', ['title' => $comment]);

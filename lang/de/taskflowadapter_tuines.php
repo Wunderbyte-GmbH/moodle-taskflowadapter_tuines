@@ -50,6 +50,7 @@ $string['necessaryuserprofilefields'] = "Benutzerprofilfelder für Taskflow die 
 $string['necessaryuserprofilefieldsdesc'] = "Benutzerprofilfelder, die befüllt sein müssen, damit der Benutzer*innen für ein Taskflow-Update berücksichtigt wird. Wenn die ausgewählten Felder nicht befüllt sind, werden Änderungen von Benutzer*innen in Wunderbyte Taskflow nicht berücksichtig. Lassen Sie diese Einstellung leer, wenn es keine Felder gibt die befüllt sein müssen.";
 $string['pluginname'] = "INES";
 $string['set:function'] = 'Wählen Sie eine Funktion aus';
+$string['submitcomment'] = 'Kommentar speichern';
 $string['subplugintype_taskflowadapter_plural'] = 'Taskflow-Adapter-Erweiterungen';
 $string['targetgroupfields'] = '<i class="fa-solid fa-people-group" aria-hidden="true"></i><strong> Felder für die Einheit </strong>';
 $string['tuines'] = "Ines API";

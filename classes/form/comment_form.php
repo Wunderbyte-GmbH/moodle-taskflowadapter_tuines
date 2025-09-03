@@ -24,11 +24,12 @@
 
 namespace taskflowadapter_tuines\form;
 
+use cache_helper;
 use context_system;
 use core_form\dynamic_form;
 use local_taskflow\local\assignments\assignment;
-use local_taskflow\local\assignments\status\assignment_status;
 use local_taskflow\local\history\history;
+use taskflowadapter_tuines\output\comment_history;
 
 
 /**
@@ -43,7 +44,7 @@ class comment_form extends dynamic_form {
         $mform = $this->_form;
 
 
-
+        $mform->addElement('static', 'commenthistory');
         $hiddenfields = [
         'id' => PARAM_INT,
         'userid' => PARAM_INT,
@@ -61,7 +62,7 @@ class comment_form extends dynamic_form {
             $mform->addElement('hidden', $name);
             $mform->setType($name, $type);
         }
-        $mform->addElement('submit', 'submitcomment', 'KoMeNtaR AbgEben');
+        $mform->addElement('submit', 'submitcomment', get_string('submitcomment', 'taskflowadapter_tuines'));
     }
 
     /**
@@ -75,7 +76,8 @@ class comment_form extends dynamic_form {
         $mform = $this->_form;
         $data['timemodified'] = time();
         $data['usermodified'] = $data['usermodified'] ?? $USER->id;
-        history::log($data['id'], $data['userid'], 'manual_change', ['action' => 'updated', 'data' => $data], $USER->id);
+        history::log($data['id'], $data['userid'], 'manual_change', ['action' => 'updated', 'data' => $data], $USER->id, $data['comment'] ?? "");
+        cache_helper::purge_by_event('changesinassignmentslist');
     }
 
     /**
@@ -83,6 +85,7 @@ class comment_form extends dynamic_form {
      * @return void
      */
     public function set_data_for_dynamic_submission(): void {
+        global $PAGE;
         $data = $this->_customdata ?? $this->_ajaxformdata ?? [];
 
         if (!empty($data['id'])) {
@@ -96,6 +99,9 @@ class comment_form extends dynamic_form {
                 $data = (object)[];
             }
         }
+        $historydata = new comment_history($data->id);
+        $renderer = $PAGE->get_renderer('local_taskflow');
+        $data->commenthistory = $renderer->render_history($historydata);
         $this->set_data($data);
     }
 
