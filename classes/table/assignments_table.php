@@ -138,7 +138,7 @@ class assignments_table extends \local_taskflow\table\assignments_table {
      *
      */
     private function is_allowed_to_edit(object $assignment) {
-        if ($assignment->overduecounter <= 1 && $assignment->prolongedcounter <= 2) {
+        if ($assignment->overduecounter <= 1 && $assignment->prolongedcounter == 1) {
             return true;
         }
         return false;
