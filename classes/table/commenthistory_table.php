@@ -26,6 +26,7 @@
 namespace taskflowadapter_tuines\table;
 use core_user;
 use html_writer;
+use local_taskflow\local\assignments\status\assignment_status;
 use local_taskflow\local\history\types\typesfactory;
 use local_wunderbyte_table\wunderbyte_table;
 
@@ -59,7 +60,6 @@ class commenthistory_table extends wunderbyte_table {
      *
      */
     public function col_timecreated($values): string {
-        $jsonobject = json_decode($values->data);
         return userdate($values->timecreated ?? 0, get_string('strftimedatetime', 'langconfig'));
     }
     /**
@@ -71,6 +71,15 @@ class commenthistory_table extends wunderbyte_table {
      *
      */
     public function col_comment($values) {
-        return $values->annotation;
+        $jsonobject = json_decode($values->data);
+        $changereasons = assignment_status::get_all_changereasons();
+        $changename = $changereasons[$jsonobject->data->change_reason] ?? "";
+        if (empty($values->annotation)) {
+            return $changename;
+        }
+        if (!empty($changename)) {
+            $changename = $changename . '; ';
+        }
+        return $changename . $values->annotation;
     }
 }

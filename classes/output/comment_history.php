@@ -76,6 +76,7 @@ class comment_history implements renderable, templatable {
         $table->sort_default_order = SORT_DESC;
 
         $table->pageable(true);
+        $table->showrowcountselect = true;
         $html = $table->outhtml(5, true);
         $data['table'] = $html;
 
