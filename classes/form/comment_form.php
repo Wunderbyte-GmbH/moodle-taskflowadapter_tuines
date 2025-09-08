@@ -43,7 +43,6 @@ class comment_form extends dynamic_form {
     protected function definition(): void {
         $mform = $this->_form;
 
-
         $mform->addElement('static', 'commenthistory');
         $hiddenfields = [
         'id' => PARAM_INT,
@@ -76,7 +75,14 @@ class comment_form extends dynamic_form {
         $mform = $this->_form;
         $data['timemodified'] = time();
         $data['usermodified'] = $data['usermodified'] ?? $USER->id;
-        history::log($data['id'], $data['userid'], 'manual_change', ['action' => 'updated', 'data' => $data], $USER->id, $data['comment'] ?? "");
+        history::log(
+            $data['id'],
+            $data['userid'],
+            'manual_change',
+            ['action' => 'updated', 'data' => $data],
+            $USER->id,
+            $data['comment'] ?? ""
+        );
         cache_helper::purge_by_event('changesinassignmentslist');
     }
 
