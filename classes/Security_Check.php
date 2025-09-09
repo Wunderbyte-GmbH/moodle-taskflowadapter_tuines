@@ -30,6 +30,7 @@ use local_taskflow\local\assignments\status\assignment_status;
 use local_taskflow\local\assignments\assignments_facade;
 use local_taskflow\task\update_assignment;
 use core\task\manager;
+use stdClass;
 
 defined('MOODLE_INTERNAL') || die();
 require_once($CFG->dirroot . '/cohort/lib.php');
@@ -125,7 +126,6 @@ class Security_Check {
     /**
      * Creates Supervisor with internalid in customfield.
      * @param array $missingpersons
-     * @param string $contractendfield
      * @return void
      */
     private function open_all_dropped_out_assignments($missingpersons) {
@@ -150,15 +150,29 @@ class Security_Check {
         }
         $assignments = $DB->get_records_sql($sql, $params);
         foreach ($assignments as $assignment) {
-            assignments_facade::reopen_missing_person_assignment($assignment->id);
-            $task = new update_assignment();
-            $task->set_custom_data([
-                'assignmentid' => $assignment->id,
-                'userid'   => $assignment->userid,
-                'id'   => $assignment->ruleid,
-            ]);
-            manager::queue_adhoc_task($task);
+            if ($this->is_rule_still_valid($assignment)) {
+                assignments_facade::reopen_missing_person_assignment($assignment->id);
+                $task = new update_assignment();
+                $task->set_custom_data([
+                    'assignmentid' => $assignment->id,
+                    'userid'   => $assignment->userid,
+                    'id'   => $assignment->ruleid,
+                ]);
+                manager::queue_adhoc_task($task);
+            }
         }
         return;
+    }
+
+    /**
+     * Creates Supervisor with internalid in customfield.
+     * @param stdClass $assignment
+     * @return bool
+     */
+    private function is_rule_still_valid($assignment): bool {
+        if (empty($assignment->unitid)) {
+            return true;
+        }
+        return cohort_is_member($assignment->unitid, $assignment->userid);
     }
 }
