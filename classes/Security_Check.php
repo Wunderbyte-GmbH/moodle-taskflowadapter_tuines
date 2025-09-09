@@ -25,8 +25,11 @@
 
 namespace taskflowadapter_tuines;
 
-use local_taskflow\local\assignments\assignments_facade;
+use local_taskflow\local\assignment_status\assignment_status_facade;
 use local_taskflow\local\assignments\status\assignment_status;
+use local_taskflow\local\assignments\assignments_facade;
+use local_taskflow\task\update_assignment;
+use core\task\manager;
 
 defined('MOODLE_INTERNAL') || die();
 require_once($CFG->dirroot . '/cohort/lib.php');
@@ -58,18 +61,8 @@ class Security_Check {
      */
     public function user_check($adapterfield, $contractendfield) {
         $missingpersons = $this->get_missing_persons($adapterfield);
-        foreach ($missingpersons as $missingperson) {
-            profile_load_custom_fields($missingperson);
-            if (
-                isset($missingperson->profile[$contractendfield]) &&
-                $missingperson->profile[$contractendfield] < time()
-            ) {
-                assignments_facade::set_all_assignments_of_user_to_status(
-                    $missingperson->id,
-                    assignment_status::STATUS_DROPPED_OUT
-                );
-            }
-        }
+        $this->set_all_assignments_of_missing_persons_dropped_out($missingpersons, $contractendfield);
+        $this->open_all_dropped_out_assignments($missingpersons);
         return;
     }
 
@@ -106,5 +99,66 @@ class Security_Check {
             $params += $inparams;
         }
         return $DB->get_records_sql($sql, $params);
+    }
+
+    /**
+     * Creates Supervisor with internalid in customfield.
+     * @param array $missingpersons
+     * @param string $contractendfield
+     * @return void
+     */
+    private function set_all_assignments_of_missing_persons_dropped_out($missingpersons, $contractendfield) {
+        foreach ($missingpersons as $missingperson) {
+            profile_load_custom_fields($missingperson);
+            if (
+                isset($missingperson->profile[$contractendfield]) &&
+                $missingperson->profile[$contractendfield] < time()
+            ) {
+                assignments_facade::set_all_assignments_of_user_to_status(
+                    $missingperson->id,
+                    assignment_status::STATUS_DROPPED_OUT
+                );
+            }
+        }
+    }
+
+    /**
+     * Creates Supervisor with internalid in customfield.
+     * @param array $missingpersons
+     * @param string $contractendfield
+     * @return void
+     */
+    private function open_all_dropped_out_assignments($missingpersons) {
+        global $DB;
+
+        $status = assignment_status_facade::get_status_identifier('droppedout');
+        $sql = "SELECT a.*
+            FROM {local_taskflow_assignment} a
+            WHERE a.status = :status";
+        $params = ['status' => $status];
+
+        if (!empty($missingpersons) && is_array($missingpersons)) {
+            $missingpersonsids = array_keys($missingpersons);
+            [$notin, $notinparams] = $DB->get_in_or_equal(
+                $missingpersonsids,
+                SQL_PARAMS_NAMED,
+                'mp',
+                false
+            );
+            $sql .= " AND a.userid $notin";
+            $params += $notinparams;
+        }
+        $assignments = $DB->get_records_sql($sql, $params);
+        foreach ($assignments as $assignment) {
+            assignments_facade::reopen_missing_person_assignment($assignment->id);
+            $task = new update_assignment();
+            $task->set_custom_data([
+                'assignmentid' => $assignment->id,
+                'userid'   => $assignment->userid,
+                'id'   => $assignment->ruleid,
+            ]);
+            manager::queue_adhoc_task($task);
+        }
+        return;
     }
 }
