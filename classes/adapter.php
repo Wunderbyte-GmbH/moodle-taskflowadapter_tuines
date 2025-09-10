@@ -27,6 +27,7 @@ namespace taskflowadapter_tuines;
 
 use DateTime;
 use local_taskflow\event\unit_updated;
+use local_taskflow\local\assignment_process\longleave_facade;
 use local_taskflow\local\assignments\assignments_facade;
 use local_taskflow\local\supervisor\supervisor;
 use local_taskflow\plugininfo\taskflowadapter;
@@ -131,7 +132,6 @@ class adapter extends external_api_base implements external_api_interface {
             // We need to get the old user record.
             // We need to compare it to the translated user data.
             // we need to update if necessary.
-
             if (empty(self::$usersbyemail[$translateduser['email']])) {
                 // If the user does not exist, we create a new one.
                 $olduser = $this->userrepo->get_user_by_mail(
@@ -184,9 +184,9 @@ class adapter extends external_api_base implements external_api_interface {
                 $this->contract_ended($newuser) ||
                 $onlongleave
             ) {
-                assignments_facade::set_all_assignments_inactive($newuser->id);
+                longleave_facade::longleave_activation($newuser->id);
             } else if ($this->on_longleave_change($oldonlongleave, $onlongleave)) {
-                assignments_facade::set_all_assignments_active($newuser->id);
+                longleave_facade::longleave_deactivation($newuser->id);
             } else {
                 self::create_or_update_unit_members($translateduser, $newuser);
             }
