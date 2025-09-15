@@ -110,16 +110,10 @@ class Security_Check {
      */
     private function set_all_assignments_of_missing_persons_dropped_out($missingpersons, $contractendfield) {
         foreach ($missingpersons as $missingperson) {
-            profile_load_custom_fields($missingperson);
-            if (
-                isset($missingperson->profile[$contractendfield]) &&
-                $missingperson->profile[$contractendfield] < time()
-            ) {
-                assignments_facade::set_all_assignments_of_user_to_status(
-                    $missingperson->id,
-                    assignment_status::STATUS_DROPPED_OUT
-                );
-            }
+            assignments_facade::set_all_assignments_of_user_to_status(
+                $missingperson->id,
+                assignment_status::STATUS_DROPPED_OUT
+            );
         }
     }
 

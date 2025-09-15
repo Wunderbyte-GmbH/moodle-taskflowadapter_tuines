@@ -31,7 +31,6 @@ use local_taskflow\output\editassignment_template_data_interface;
 use local_taskflow\local\supervisor\supervisor;
 use local_taskflow\output\history;
 use taskflowadapter_tuines\form\comment_form;
-use taskflowadapter_tuines\form\editassignment;
 use renderer_base;
 use context_system;
 use taskflowadapter_tuines\form\editassignment_admin;
