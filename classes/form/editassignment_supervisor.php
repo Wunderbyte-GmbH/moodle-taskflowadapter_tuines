@@ -27,6 +27,7 @@ namespace taskflowadapter_tuines\form;
 use context_system;
 use core_form\dynamic_form;
 use html_writer;
+use local_taskflow\local\assignment_status\assignment_status_facade;
 use local_taskflow\local\assignments\assignment;
 use local_taskflow\local\assignments\status\assignment_status;
 use local_taskflow\local\history\history;
@@ -130,11 +131,11 @@ class editassignment_supervisor extends dynamic_form {
         if ($data->actionbutton == 'declined') {
             $data->duedate = $assignment->duedate;
             $data->comment = $data->comment_denied;
-            $data->status = assignment_status::STATUS_OVERDUE;
+            $data->status = assignment_status_facade::get_status_identifier('overdue');
         }
         if ($data->actionbutton == 'extension') {
             $data->comment = $data->comment_approved;
-            $data->status = assignment_status::STATUS_PROLONGED;
+            $data->status = assignment_status_facade::get_status_identifier('prolonged');
             $data->prolongedcounter++;
         }
         // Unset all the Data properties not needed.

@@ -25,8 +25,8 @@
 
 namespace taskflowadapter_tuines\output;
 
+use local_taskflow\local\assignment_status\assignment_status_facade;
 use local_taskflow\local\assignments\assignment;
-use local_taskflow\local\assignments\status\assignment_status;
 use local_taskflow\output\editassignment_template_data_interface;
 use local_taskflow\local\supervisor\supervisor;
 use local_taskflow\output\history;
@@ -91,7 +91,7 @@ class editassignment_template_data_admin implements editassignment_template_data
             ],
             'status' => [
                 'label' => get_string('status'),
-                'returnvalue' => fn($value) => assignment_status::get_label($value),
+                'returnvalue' => fn($value) => assignment_status_facade::get_specific_names($value),
             ],
             'usermodified' => [
                 'label' => get_string('usermodified', 'local_taskflow'),
@@ -108,7 +108,7 @@ class editassignment_template_data_admin implements editassignment_template_data
                     $collecttargets = [];
                     foreach ($targets as $target) {
                          $collecttargets[] = $target->targetname . " ("
-                         . assignment_status::get_label($target->completionstatus) . ")";
+                         . assignment_status_facade::get_specific_names($target->completionstatus) . ")";
                     }
                     return implode("<br>", $collecttargets);
                 },

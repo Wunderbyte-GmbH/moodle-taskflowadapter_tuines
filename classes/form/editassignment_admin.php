@@ -26,6 +26,7 @@ namespace taskflowadapter_tuines\form;
 
 use context_system;
 use core_form\dynamic_form;
+use local_taskflow\local\assignment_status\assignment_status_facade;
 use local_taskflow\local\assignments\assignment;
 use local_taskflow\local\assignments\status\assignment_status;
 use local_taskflow\local\history\history;
@@ -55,7 +56,7 @@ class editassignment_admin extends dynamic_form {
         $mform->addElement('hidden', 'prolongedcounter');
         $mform->setType('prolongedcounter', PARAM_INT);
 
-        $statusoptions = assignment_status::get_all();
+        $statusoptions = assignment_status_facade::get_all_names();
         $statusoptions = array_unique($statusoptions);
         // Status ändern.
         $mform->addElement(
@@ -116,10 +117,10 @@ class editassignment_admin extends dynamic_form {
 
         $assignment = new assignment($data->id);
         $data->useridmodified = $USER->id;
-        if ($data->status == assignment_status::STATUS_PROLONGED) {
+        if ($data->status == assignment_status_facade::get_status_identifier('prolonged')) {
             $data->prolongedcounter++;
         }
-        if ($data->status == assignment_status::STATUS_OVERDUE) {
+        if ($data->status == assignment_status_facade::get_status_identifier('overdue')) {
             $data->overduecounter++;
         }
         $assignment->add_or_update_assignment((array)$data, history::TYPE_MANUAL_CHANGE, true);

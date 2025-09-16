@@ -26,7 +26,6 @@
 namespace taskflowadapter_tuines;
 
 use local_taskflow\local\assignment_status\assignment_status_facade;
-use local_taskflow\local\assignments\status\assignment_status;
 use local_taskflow\local\assignments\assignments_facade;
 use local_taskflow\task\update_assignment;
 use core\task\manager;
@@ -112,7 +111,7 @@ class Security_Check {
         foreach ($missingpersons as $missingperson) {
             assignments_facade::set_all_assignments_of_user_to_status(
                 $missingperson->id,
-                assignment_status::STATUS_DROPPED_OUT
+                assignment_status_facade::get_status_identifier('droppedout')
             );
         }
     }
