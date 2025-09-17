@@ -27,6 +27,7 @@ namespace taskflowadapter_tuines;
 
 use local_taskflow\local\assignment_status\assignment_status_facade;
 use local_taskflow\local\assignments\assignments_facade;
+use local_taskflow\local\external_adapter\external_api_base;
 use local_taskflow\task\update_assignment;
 use core\task\manager;
 use stdClass;
@@ -61,8 +62,63 @@ class Security_Check {
      */
     public function user_check($adapterfield, $contractendfield) {
         $missingpersons = $this->get_missing_persons($adapterfield);
+        $this->inactivate_moodle_users($missingpersons);
+        $this->activate_moodle_users($missingpersons);
         $this->set_all_assignments_of_missing_persons_dropped_out($missingpersons, $contractendfield);
         $this->open_all_dropped_out_assignments($missingpersons);
+        return;
+    }
+
+    /**
+     * Creates Supervisor with internalid in customfield.
+     * @param array $missingpersons
+     * @return void
+     */
+    private function activate_moodle_users($missingpersons) {
+        global $DB;
+
+        if (!empty($missingpersons)) {
+            $missingpersonsids = array_keys($missingpersons);
+            [$notinsql, $notinparams] = $DB->get_in_or_equal($missingpersonsids, SQL_PARAMS_NAMED, 'param', false);
+            $where = "suspended = 1 AND id $notinsql";
+            $params = $notinparams;
+        } else {
+            $where = "suspended = 1";
+            $params = [];
+        }
+
+        $suspendedusers = $DB->get_records_select('user', $where, $params, '', 'id, suspended, timemodified');
+
+        foreach ($suspendedusers as $user) {
+            $user->suspended = 0;
+            $user->timemodified = time();
+            external_api_base::$importing = false;
+            user_update_user($user);
+        }
+    }
+
+    /**
+     * Creates Supervisor with internalid in customfield.
+     * @param array $missingpersons
+     * @return void
+     */
+    private function inactivate_moodle_users($missingpersons) {
+        global $DB;
+        foreach ($missingpersons as $missingperson) {
+            if (
+                $missingperson->suspended == '1' ||
+                is_siteadmin($missingperson->id)
+            ) {
+                mtrace("Skipped admin user with id {$missingperson->id}");
+                continue;
+            }
+
+            $missingperson->suspended = 1;
+            $missingperson->timemodified = time();
+
+            user_update_user($missingperson);
+            \core\session\manager::destroy_user_sessions($missingperson->id);
+        }
         return;
     }
 
