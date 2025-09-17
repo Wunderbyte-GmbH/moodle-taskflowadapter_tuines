@@ -37,6 +37,7 @@ $string['denytext'] = "If there are no valid reasons for extending the deadline,
 $string['dwhurl'] = "Data Warehouse Url";
 $string['dwhurl_desc'] = "Insert Data Warehouse Url for import";
 $string['enter_value'] = 'Enter a suitable JSON key for this setting';
+$string['eventdwhfetchfailed'] = 'DWH import error';
 $string['extensiontext'] = 'If there are valid and compelling reasons preventing employees from completing the standard training within the prescribed timeframe, supervisors may extend the deadline once. Providing a reason is mandatory for this extension.';
 $string['function'] = 'Assign function to userprofilefield: ';
 $string['grantextension'] = "Grant Extension";

@@ -27,6 +27,7 @@ namespace taskflowadapter_tuines\task;
 
 use core\task\scheduled_task;
 use local_taskflow\local\external_adapter\external_api_repository;
+use taskflowadapter_tuines\event\dwh_fetch_failed;
 
 /**
  * Observer class that handles user events.
@@ -37,7 +38,7 @@ class fetch_dwh_data extends scheduled_task {
      * @return string;
      */
     public function get_name() {
-        return get_string('task_fetch_remote_data', 'local_taskflow');
+        return get_string('taskfetchremotedata', 'local_taskflow');
     }
 
     /**
@@ -47,15 +48,40 @@ class fetch_dwh_data extends scheduled_task {
     public function execute() {
         $url = get_config('taskflowadapter_tuines', 'dwhurl');
         if (empty($url)) {
-            $this->log_cli(get_string('fetchdwhurl', 'local_taskflow'));
+            $event = dwh_fetch_failed::create([
+                'context' => \context_system::instance(),
+                'other' => [
+                    'url' => $url,
+                    'error' => get_string('fetchdwhurl', 'local_taskflow'),
+                ],
+            ]);
+            $event->trigger();
             return get_string('fetchdwhurl', 'local_taskflow');
         }
 
         $curl = new \curl();
         $response = $curl->get($url);
         if ($curl->get_errno()) {
-            $this->log_cli(get_string('fetchdwhurlerror', 'local_taskflow', $curl->error));
+            $event = dwh_fetch_failed::create([
+                'context' => \context_system::instance(),
+                'other' => [
+                    'url' => $url,
+                    'error' => get_string('fetchdwhurlerror', 'local_taskflow', $curl->error),
+                ],
+            ]);
+            $event->trigger();
             return get_string('fetchdwhurlerror', 'local_taskflow', $curl->error);
+        }
+        if ($this->is_response_empty($response)) {
+            $event = dwh_fetch_failed::create([
+                'context' => \context_system::instance(),
+                'other' => [
+                    'url' => $url,
+                    'error' => get_string('fetchdwhresponseerror', 'local_taskflow', $curl->error),
+                ],
+            ]);
+            $event->trigger();
+            return get_string('fetchdwhresponseresponse', 'local_taskflow');
         }
 
         $start = microtime(true);
@@ -70,6 +96,22 @@ class fetch_dwh_data extends scheduled_task {
         return get_string('fetchdwhurlresponse', 'local_taskflow', $url) .
             get_string('executiontime', 'local_taskflow', sprintf('%.4f', $elapsed)) .
             ' Response: ' . substr($response, 0, 50);
+    }
+
+    /**
+     * Triggered when a user profile field is deleted.
+     * @param string $response
+     * @return bool;
+     */
+    private function is_response_empty($response): bool {
+        $response = (object) json_decode($response);
+        if (
+            isset($response->persons) &&
+            !empty($response->persons)
+        ) {
+            return false;
+        }
+        return true;
     }
 
     /**
