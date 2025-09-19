@@ -116,7 +116,7 @@ class security_check {
             $missingperson->timemodified = time();
 
             user_update_user($missingperson);
-            \core\session\manager::destroy_user_sessions($missingperson->id);
+            \core\session\manager::kill_user_sessions($missingperson->id);
         }
         return;
     }
