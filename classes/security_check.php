@@ -42,7 +42,7 @@ require_once($CFG->dirroot . '/cohort/lib.php');
  * @copyright 2025 Wunderbyte GmbH
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class Security_Check {
+class security_check {
     /** @var array Stores the external user data. */
     protected array $users = [];
 
@@ -117,7 +117,7 @@ class Security_Check {
             $missingperson->timemodified = time();
 
             user_update_user($missingperson);
-            \core\session\manager::destroy_user_sessions($missingperson->id);
+            \core\session\manager::kill_user_sessions($missingperson->id);
         }
         return;
     }
@@ -140,7 +140,7 @@ class Security_Check {
 
         $notempty = $DB->sql_isnotempty('d', 'data', false, true);
 
-        $sql = "SELECT u.*
+        $sql = "SELECT u.id, u.suspended, u.timemodified
                 FROM {user} u
                 JOIN {user_info_field} f ON f.shortname = :shortname
                 JOIN {user_info_data} d ON d.userid = u.id AND d.fieldid = f.id
