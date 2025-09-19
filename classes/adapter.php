@@ -58,7 +58,7 @@ class adapter extends external_api_base implements external_api_interface {
         $this->create_or_update_users();
         $this->create_or_update_supervisor();
         $this->save_all_user_infos($this->users);
-        $securitymanager = new Security_Check(
+        $securitymanager = new security_check(
             $this->users
         );
         $securitymanager->user_check(

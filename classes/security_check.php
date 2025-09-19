@@ -42,7 +42,7 @@ require_once($CFG->dirroot . '/cohort/lib.php');
  * @copyright 2025 Wunderbyte GmbH
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class security_check {
+class Security_Check {
     /** @var array Stores the external user data. */
     protected array $users = [];
 
@@ -109,6 +109,7 @@ class security_check {
                 $missingperson->suspended == '1' ||
                 is_siteadmin($missingperson->id)
             ) {
+                mtrace("Skipped admin user with id {$missingperson->id}");
                 continue;
             }
 
@@ -139,7 +140,7 @@ class security_check {
 
         $notempty = $DB->sql_isnotempty('d', 'data', false, true);
 
-        $sql = "SELECT u.id, u.suspended, u.timemodified
+        $sql = "SELECT u.*
                 FROM {user} u
                 JOIN {user_info_field} f ON f.shortname = :shortname
                 JOIN {user_info_data} d ON d.userid = u.id AND d.fieldid = f.id
