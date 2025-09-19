@@ -109,7 +109,6 @@ class security_check {
                 $missingperson->suspended == '1' ||
                 is_siteadmin($missingperson->id)
             ) {
-                mtrace("Skipped admin user with id {$missingperson->id}");
                 continue;
             }
 
