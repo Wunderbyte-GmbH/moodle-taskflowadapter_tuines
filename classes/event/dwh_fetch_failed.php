@@ -48,4 +48,12 @@ class dwh_fetch_failed extends \core\event\base {
     public function get_description() {
         return "DWH fetch failed for URL {$this->other['url']} with error: {$this->other['error']}";
     }
+
+    /**
+     * Init parameters.
+     * @return \moodle_url
+     */
+    public function get_url() {
+        return new \moodle_url('/local/taskflow');
+    }
 }
