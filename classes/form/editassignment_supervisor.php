@@ -88,9 +88,6 @@ class editassignment_supervisor extends dynamic_form {
 
         // Duedate.
         $mform->addElement('date_selector', 'duedate', get_string('duedate', 'local_taskflow'));
-        if (isset($extensionperiod)) {
-            $mform->setDefault('duedate', $extensionperiod);
-        }
         $mform->freeze('duedate');
         // Changes should be preserved on automatic update via import.
         $mform->addElement(
@@ -164,7 +161,7 @@ class editassignment_supervisor extends dynamic_form {
                 $data = $assignmentdata;
                 $ruledata = json_decode($assignment->rulejson);
                 if (isset($ruledata->rulejson->rule->extensionperiod)) {
-                    if ($assignment->duedate <= strtotime('now')) {
+                    if ($assignment->duedate > strtotime('now')) {
                         $extensionperiod = (int) $assignment->duedate + (int) $ruledata->rulejson->rule->extensionperiod;
                     } else {
                         $extensionperiod = strtotime('today 23:59') + (int) $ruledata->rulejson->rule->extensionperiod;
