@@ -229,6 +229,12 @@ class adapter extends external_api_base implements external_api_interface {
             $invalidmoodleunitids = [];
             foreach ($invalidunits as $invalidunit) {
                 $invalidmoodleunitids[] = $this->unitmapping[$invalidunit];
+                if (cohort_is_member($this->unitmapping[$invalidunit], $userid)) {
+                    cohort_remove_member(
+                        $this->unitmapping[$invalidunit],
+                        $userid
+                    );
+                }
             }
             assignments_facade::set_user_units_assignments_inactive(
                 $userid,
