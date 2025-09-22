@@ -73,6 +73,9 @@ class editassignment_template_data_admin implements editassignment_template_data
             'unitid' => [
                 'label' => get_string('targets', 'local_taskflow'),
                 'returnvalue' => function ($value) use ($DB) {
+                    if (empty($value)) {
+                        return "";
+                    }
                     $cohort = $DB->get_record('cohort', ['id' => $value], 'name');
                     return $cohort->name ?? "";
                 },
