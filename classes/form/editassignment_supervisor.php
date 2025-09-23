@@ -129,6 +129,7 @@ class editassignment_supervisor extends dynamic_form {
             $data->duedate = $assignment->duedate;
             $data->comment = $data->comment_denied;
             $data->status = assignment_status_facade::get_status_identifier('overdue');
+            $data->overduecounter++;
         }
         if ($data->actionbutton == 'extension') {
             $data->comment = $data->comment_approved;
