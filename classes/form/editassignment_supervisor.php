@@ -198,10 +198,10 @@ class editassignment_supervisor extends dynamic_form {
         }
         if ($data['actionbutton'] == 'declined') {
             if (!empty($data['change_reason'])) {
-                $errors['change_reason'] = get_string('change_reason:errordeclined', 'taskflowadapter_tuines');
+                $errors['change_reason'] = get_string('change_reason_errordeclined', 'taskflowadapter_tuines');
             }
             if (empty($data['comment_denied'])) {
-                $errors['comment_denied'] = get_string('comment_denied:errordeclined', 'taskflowadapter_tuines');
+                $errors['comment_denied'] = get_string('comment_denied_errordeclined', 'taskflowadapter_tuines');
             }
         }
         return $errors;

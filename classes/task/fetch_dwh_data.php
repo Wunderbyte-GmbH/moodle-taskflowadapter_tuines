@@ -59,7 +59,7 @@ class fetch_dwh_data extends scheduled_task {
             return get_string('fetchdwhurl', 'local_taskflow');
         }
 
-        $curl = new \curl();
+        $curl = $this->make_curl();
         $response = $curl->get($url);
         if ($curl->get_errno()) {
             $event = dwh_fetch_failed::create([
@@ -96,6 +96,14 @@ class fetch_dwh_data extends scheduled_task {
         return get_string('fetchdwhurlresponse', 'local_taskflow', $url) .
             get_string('executiontime', 'local_taskflow', sprintf('%.4f', $elapsed)) .
             ' Response: ' . substr($response, 0, 50);
+    }
+
+    /**
+     * Triggered when a user profile field is deleted.
+     * @return \curl;
+     */
+    protected function make_curl(): \curl {
+        return new \curl();
     }
 
     /**
