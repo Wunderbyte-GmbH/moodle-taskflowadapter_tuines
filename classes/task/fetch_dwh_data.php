@@ -89,10 +89,6 @@ class fetch_dwh_data extends scheduled_task {
         $apidatamanager->process_incoming_data();
         $end = microtime(true);
         $elapsed = $end - $start;
-        $this->log_cli(
-            get_string('fetchdwhurlresponse', 'local_taskflow', $url) .
-            get_string('executiontime', 'local_taskflow', sprintf('%.4f', $elapsed))
-        );
         return get_string('fetchdwhurlresponse', 'local_taskflow', $url) .
             get_string('executiontime', 'local_taskflow', sprintf('%.4f', $elapsed)) .
             ' Response: ' . substr($response, 0, 50);
@@ -120,16 +116,5 @@ class fetch_dwh_data extends scheduled_task {
             return false;
         }
         return true;
-    }
-
-    /**
-     * Triggered when a user profile field is deleted.
-     * @param string $msg
-     * @return void;
-     */
-    private function log_cli(string $msg): void {
-        if (defined('CLI_SCRIPT') && CLI_SCRIPT) {
-            mtrace($msg);
-        }
     }
 }
