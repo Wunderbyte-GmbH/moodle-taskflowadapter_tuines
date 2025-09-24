@@ -116,7 +116,12 @@ class security_check {
             $missingperson->timemodified = time();
 
             user_update_user($missingperson);
-            \core\session\manager::destroy_user_sessions($missingperson->id);
+            if (
+                class_exists(\core\session\manager::class) &&
+                method_exists(\core\session\manager::class, 'destroy_user_sessions')
+            ) {
+                \core\session\manager::destroy_user_sessions($missingperson->id);
+            }
         }
         return;
     }
