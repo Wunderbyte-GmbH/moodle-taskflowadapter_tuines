@@ -98,7 +98,8 @@ class editassignment_supervisor extends dynamic_form {
         );
         $mform->setDefault('keepchanges', 1);
         // Submit Extension.
-        $mform->addElement('submit', 'extension', get_string('grantextension', 'taskflowadapter_tuines'));
+        $mform->addElement('button', 'extension', get_string('grantextension', 'taskflowadapter_tuines'));
+
          // Deny Extension.
         $mform->addElement('header', 'denyheader', get_string('denyextension', 'taskflowadapter_tuines'));
         $mform->setExpanded('denyheader', false);
@@ -112,7 +113,7 @@ class editassignment_supervisor extends dynamic_form {
             'wrap="virtual" rows="3" cols="50"'
         );
         $mform->setType('comment_denied', PARAM_TEXT);
-        $mform->addElement('submit', 'declined', get_string('denyextension', 'taskflowadapter_tuines'));
+        $mform->addElement('button', 'declined', get_string('denyextension', 'taskflowadapter_tuines'));
     }
 
     /**
@@ -125,14 +126,16 @@ class editassignment_supervisor extends dynamic_form {
         $mform = $this->_form;
         $assignment = new assignment($data->id);
         $data->useridmodified = $USER->id;
+
+        if ($data->actionbutton == 'extension') {
+            $data->comment = $data->comment_approved;
+            $data->status = assignment_status_facade::get_status_identifier('prolonged');
+            $data->prolongedcounter++;
+        }
+
         if ($data->actionbutton == 'declined') {
             $data->duedate = $assignment->duedate;
             $data->comment = $data->comment_denied;
-            $data->status = assignment_status_facade::get_status_identifier('overdue');
-            $data->overduecounter++;
-        }
-        if ($data->actionbutton == 'extension') {
-            $data->comment = $data->comment_approved;
             $data->status = assignment_status_facade::get_status_identifier('prolonged');
             $data->prolongedcounter++;
         }
