@@ -24,8 +24,11 @@
  */
 
 namespace taskflowadapter_tuines\task;
-
+defined('MOODLE_INTERNAL') || die();
+require_once($CFG->libdir . '/filelib.php');
 use core\task\scheduled_task;
+use curl;
+use context_system;
 use local_taskflow\local\external_adapter\external_api_repository;
 use taskflowadapter_tuines\event\dwh_fetch_failed;
 
@@ -49,7 +52,7 @@ class fetch_dwh_data extends scheduled_task {
         $url = get_config('taskflowadapter_tuines', 'dwhurl');
         if (empty($url)) {
             $event = dwh_fetch_failed::create([
-                'context' => \context_system::instance(),
+                'context' => context_system::instance(),
                 'other' => [
                     'url' => $url,
                     'error' => get_string('fetchdwhurl', 'local_taskflow'),
@@ -63,7 +66,7 @@ class fetch_dwh_data extends scheduled_task {
         $response = $curl->get($url);
         if ($curl->get_errno()) {
             $event = dwh_fetch_failed::create([
-                'context' => \context_system::instance(),
+                'context' => context_system::instance(),
                 'other' => [
                     'url' => $url,
                     'error' => get_string('fetchdwhurlerror', 'local_taskflow', $curl->error),
@@ -74,7 +77,7 @@ class fetch_dwh_data extends scheduled_task {
         }
         if ($this->is_response_empty($response)) {
             $event = dwh_fetch_failed::create([
-                'context' => \context_system::instance(),
+                'context' => context_system::instance(),
                 'other' => [
                     'url' => $url,
                     'error' => get_string('fetchdwhresponseerror', 'local_taskflow', $curl->error),
@@ -98,8 +101,8 @@ class fetch_dwh_data extends scheduled_task {
      * Triggered when a user profile field is deleted.
      * @return \curl;
      */
-    protected function make_curl(): \curl {
-        return new \curl();
+    protected function make_curl(): curl {
+        return new curl();
     }
 
     /**
