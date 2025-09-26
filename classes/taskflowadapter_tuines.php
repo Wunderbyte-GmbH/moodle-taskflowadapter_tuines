@@ -33,6 +33,7 @@ use admin_setting_description;
 use admin_setting_heading;
 use admin_settingpage;
 use core_external\external_api;
+use local_taskflow\local\assignment_status\assignment_status_facade;
 use local_taskflow\local\external_adapter\external_api_base;
 use local_taskflow\plugininfo\taskflowadapter;
 use stdClass;
@@ -142,6 +143,16 @@ class taskflowadapter_tuines extends taskflowadapter {
             get_string('usingprolongedstate', self::COMPONENTNAME),
             get_string('usingprolongedstate_desc', self::COMPONENTNAME),
             0
+        ));
+
+        $facade = new assignment_status_facade();
+        $statusoptions = $facade->get_all_names();
+        $settings->add(new admin_setting_configmultiselect(
+            self::COMPONENTNAME . "/excludestatus",
+            get_string('excludestatus', self::COMPONENTNAME),
+            get_string('excludestatus_desc', self::COMPONENTNAME),
+            [],
+            $statusoptions
         ));
 
         $settings->add(new admin_setting_configtext(
