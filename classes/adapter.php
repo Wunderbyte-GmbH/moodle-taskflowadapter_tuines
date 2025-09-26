@@ -132,14 +132,15 @@ class adapter extends external_api_base implements external_api_interface {
             // We need to get the old user record.
             // We need to compare it to the translated user data.
             // we need to update if necessary.
-            if (empty(self::$usersbyemail[$translateduser['email']])) {
+            $externalid = $this->return_shortname_for_functionname(taskflowadapter::TRANSLATOR_USER_EXTERNALID);
+            if (empty(self::$usersbyemail[$translateduser[$externalid]])) {
                 // If the user does not exist, we create a new one.
                 $olduser = $this->userrepo->get_user_by_mail(
-                    $translateduser['email']
+                    $translateduser[$externalid]
                 );
             } else {
                 // If the user exists, we get the old user.
-                $olduser = self::$usersbyemail[$translateduser['email']];
+                $olduser = self::$usersbyemail[$translateduser[$externalid]];
             }
 
             if ($olduser) {
