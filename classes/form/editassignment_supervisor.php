@@ -91,7 +91,7 @@ class editassignment_supervisor extends dynamic_form {
         $mform->freeze('duedate');
         // Changes should be preserved on automatic update via import.
         $mform->addElement(
-            'advcheckbox',
+            'hidden',
             'keepchanges',
             '',
             get_string('keepchangesonimport', 'local_taskflow')
