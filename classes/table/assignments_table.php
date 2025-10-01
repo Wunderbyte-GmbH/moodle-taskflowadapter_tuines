@@ -42,13 +42,31 @@ use moodle_url;
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class assignments_table extends \local_taskflow\table\assignments_table {
+
+    public string $returnurl = '';
+
+    /**
+     * Constructor. Does store uniqueid as hashed value and the actual classname.
+     * The $uniqueid should be composed by ASCII alphanumeric characters, underlines and spaces only!
+     * It is recommended to avoid of usage of simple single words like "table" to reduce chance of affecting by Moodle`s core CSS
+     *
+     * @param string $uniqueid Has to be really unique eg. by adding the cmid, so it's unique over all instances of one plugin!
+     */
+    public function __construct($uniqueid) {
+        global $PAGE;
+        if (empty($this->returnurl)) {
+            $this->returnurl = $PAGE->url->out();
+        }
+        parent::__construct($uniqueid);
+    }
+
     /**
      * Add column with actions.
      * @param mixed $values
      * @return string
      */
     public function col_actions($values) {
-        global $OUTPUT, $USER, $PAGE;
+        global $OUTPUT, $USER;
 
         $url = new moodle_url('/local/taskflow/assignment.php', [
             'id' => $values->id,
@@ -66,11 +84,9 @@ class assignments_table extends \local_taskflow\table\assignments_table {
             $hascapability ||
             (($supervisor->id ?? -1) === $USER->id && $this->is_allowed_to_edit($assignment))
         ) {
-            $returnurl = $PAGE->url;
-            $returnurlout = $returnurl->out(false);
             $url = new moodle_url('/local/taskflow/editassignment.php', [
                 'id' => $values->id,
-                'returnurl' => $returnurlout,
+                'returnurl' => $this->returnurl,
             ]);
 
             $html .= html_writer::div(html_writer::link(
