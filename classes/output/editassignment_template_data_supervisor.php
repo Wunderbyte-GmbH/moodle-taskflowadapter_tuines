@@ -105,8 +105,15 @@ class editassignment_template_data_supervisor implements editassignment_template
                     $targets = json_decode($assignment->targets);
                     $collecttargets = [];
                     foreach ($targets as $target) {
-                         $collecttargets[] = $target->targetname . " ("
-                         . assignment_status_facade::get_specific_names($target->completionstatus) . ")";
+                        $completionstatus = get_string('notcompleted', 'local_taskflow');
+                        if (
+                            isset($target->completionstatus) &&
+                            $target->completionstatus == 1
+                        ) {
+                            $completionstatus = get_string('completed', 'local_taskflow');
+                        }
+                        $collecttargets[] = $target->targetname . " ("
+                         . $completionstatus . ")";
                     }
                     return implode("<br>", $collecttargets);
                 },
