@@ -96,6 +96,7 @@ class editassignment_supervisor extends dynamic_form {
             '',
             get_string('keepchangesonimport', 'local_taskflow')
         );
+        $mform->setType('keepchanges', PARAM_BOOL);
         $mform->setDefault('keepchanges', 1);
         // Submit Extension.
         $mform->addElement('button', 'extension', get_string('grantextension', 'taskflowadapter_tuines'));

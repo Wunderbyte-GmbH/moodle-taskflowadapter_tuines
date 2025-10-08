@@ -42,7 +42,7 @@ use moodle_url;
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class assignments_table extends \local_taskflow\table\assignments_table {
-
+    /** @var string $returnurl */
     public string $returnurl = '';
 
     /**

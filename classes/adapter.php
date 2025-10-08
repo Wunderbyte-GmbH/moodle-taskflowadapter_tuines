@@ -205,7 +205,7 @@ class adapter extends external_api_base implements external_api_interface {
         $onlongleave
     ) {
         if (
-            is_number($oldonlongleave) &&
+            !empty($oldonlongleave) &&
             $oldonlongleave != $onlongleave
         ) {
             return true;
