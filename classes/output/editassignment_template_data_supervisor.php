@@ -68,35 +68,13 @@ class editassignment_template_data_supervisor implements editassignment_template
                 'label' => get_string('fullname'),
                 'returnvalue' => fn($value) => format_string($value),
             ],
-            'unitid' => [
-                'label' => get_string('targets', 'local_taskflow'),
-                'returnvalue' => function ($value) use ($DB) {
-                    $cohort = $DB->get_record('cohort', ['id' => $value], 'name');
-                    return $cohort->name ?? "";
-                },
-            ],
-            'name' => [
-                'label' => get_string('name'),
-                'returnvalue' => fn($value) => format_string($value),
-            ],
-            'ruledescription' => [
-                'label' => get_string('description'),
-                'returnvalue' => fn($value) => format_string($value),
-            ],
-            'assigneddate' => [
-                'label' => get_string('assigneddate', 'local_taskflow'),
-                'returnvalue' => fn($value) => userdate($value),
-            ],
             'status' => [
                 'label' => get_string('status'),
                 'returnvalue' => fn($value) => assignment_status_facade::get_specific_names($value),
             ],
-            'usermodified' => [
-                'label' => get_string('usermodified', 'local_taskflow'),
-                'returnvalue' => function ($value) {
-                    $user = \core_user::get_user($value);
-                    return fullname($user);
-                },
+            'duedate' => [
+                'label' => get_string('duedate', 'local_taskflow'),
+                'returnvalue' => fn($value) => date('d.m.Y', $value),
             ],
             'packages' => [
                 'label' => get_string('assignedpackages', 'taskflowadapter_tuines'),
@@ -152,6 +130,7 @@ class editassignment_template_data_supervisor implements editassignment_template
             $classname = "\\\\taskflowadapter_tuines\\\\form\\\\editassignment_supervisor";
             $form->set_data_for_dynamic_submission();
             $this->data['adapter'] = $classname;
+            $this->data['hashistory'] = false;
             $this->data['editassignmentform'] = $form->render();
         }
         $this->data['id'] = $assignment->id;

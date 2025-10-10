@@ -87,7 +87,7 @@ class editassignment_supervisor extends dynamic_form {
         $mform->setType('comment_approved', PARAM_TEXT);
 
         // Duedate.
-        $mform->addElement('date_selector', 'duedate', get_string('duedate', 'local_taskflow'));
+        $mform->addElement('date_selector', 'duedate', get_string('extensionuntil', 'local_taskflow'));
         $mform->freeze('duedate');
         // Changes should be preserved on automatic update via import.
         $mform->addElement(

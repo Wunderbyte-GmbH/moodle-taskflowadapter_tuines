@@ -74,7 +74,7 @@ class assignments_table extends \local_taskflow\table\assignments_table {
 
         $html = html_writer::div(html_writer::link(
             $url->out(),
-            '<i class="icon fa fa-info-circle"></i>'
+            get_string('training', 'taskflowadapter_tuines'),
         ));
         $data = [];
         $supervisor = supervisor::get_supervisor_for_user($values->userid ?? 0);
@@ -91,7 +91,7 @@ class assignments_table extends \local_taskflow\table\assignments_table {
 
             $html .= html_writer::div(html_writer::link(
                 $url,
-                "<i class='icon fa fa-edit'></i>"
+                get_string('edit', 'taskflowadapter_tuines'),
             ));
             table::transform_actionbuttons_array($data);
         }
@@ -143,6 +143,31 @@ class assignments_table extends \local_taskflow\table\assignments_table {
         $externalidfield = external_api_base::return_shortname_for_functionname(taskflowadapter::TRANSLATOR_USER_EXTERNALID);
         $externalid = $customfields->$externalidfield;
         return html_writer::link("https://tiss.tuwien.ac.at/person/$externalid.html", $values->fullname);
+    }
+
+    /**
+     * col_targets for WB table.
+     *
+     * @param mixed $values
+     *
+     * @return string
+     *
+     */
+    public function col_targets($values) {
+        $jsonobject = json_decode($values->targets) ?? [];
+        $html = '';
+        $stringmanager = get_string_manager();
+        foreach ($jsonobject as $item) {
+            $completionstatus = get_string('notcompleted', 'local_taskflow');
+            if (
+                isset($item->completionstatus) &&
+                $item->completionstatus == 1
+            ) {
+                $completionstatus = get_string('completed', 'local_taskflow');
+            }
+            $html .= "$item->targetname ( $completionstatus)</br>";
+        }
+        return html_writer::div($html);
     }
 
     /**

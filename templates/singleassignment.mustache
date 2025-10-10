@@ -1,0 +1,212 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template local_adele/initview
+    Classes required for JS:
+    * none
+    Data attributes required for JS:
+    * none
+    Context variables required for this template:
+    Example context (json):
+    {
+        "userid": 12345,
+        "fullname": "Alice Johnson",
+        "profilepicurl": "https://moodle.example.com/user/pix.php/123/f1.jpg",
+        "assignmentdata": {
+            "description": "Please complete the assigned competencies before the deadline.",
+            "duedate": "10 June 2025",
+            "supervisoremail": "supervisor@example.com",
+            "supervisorfullname": "Dr. Emily Smith",
+            "target": [
+                {
+                    "targetid": 101,
+                    "assignmentid": 5001,
+                    "targettypestr": "Skill",
+                    "targetname": "Object-Oriented Programming",
+                    "iscompleted": true,
+                    "allowuploadevidence": true,
+                    "evidence": {
+                        "evidence_name": "OOP Project Report",
+                        "ac_status": "Pending Review",
+                        "evidence_description": "Submitted project on Java-based OOP principles.",
+                        "evidence_timecreated": 1717488000,
+                        "competencyevidenceid": 321,
+                        "id": 888,
+                        "file": {
+                            "url": "https://moodle.example.com/pluginfile.php/9876/assignment/evidence/oop_project.pdf",
+                            "name": "oop_project.pdf"
+                        }
+                    }
+                }
+            ]
+        },
+        "hascompetency": true,
+        "courselist": [
+            {
+                "targetname": "Object-Oriented Programming",
+                "list": "<ul><li><a href='https://moodle.example.com/course/view.php?id=23'>OOP in Java</a></li></ul>"
+            },
+            {
+                "targetname": "Software Development Life Cycle",
+                "list": "<ul><li><a href='https://moodle.example.com/course/view.php?id=24'>Software Engineering Basics</a></li></ul>"
+            }
+        ]
+    }
+}}
+
+<!-- Ensure the following markup resides within the content area of your Moodle page -->
+<div class="container my-4" id="userassignmentview">
+  <!-- Eckdaten -->
+  <div class="card mb-4">
+    <div class="card-header d-flex justify-content-between align-items-center pr-4">
+    <h2>{{#str}} myassignmentto , local_taskflow {{/str}} {{fullname}}</h2>
+    <img src="{{profilepicurl}}" alt="Profile Picture" class="profile-circle">
+    </div>
+    <div class="card-body">
+        {{#assignmentdata}}
+        <p>{{description}}</p>
+        <p>{{#str}} duedateto , local_taskflow {{/str}} <b>{{duedate}}</b></p>
+        <p>{{#str}} supervisor:contacther , local_taskflow {{/str}} <b><a href="mailto:{{supervisoremail}}">{{supervisorfullname}}</a></b></p>
+        {{#target.0}}
+        <hr>
+        {{/target.0}}
+        <hr>
+        {{#target}}
+        <dl class="row">
+            <dt></dt>
+            <dd class="col-sm-12">
+            <ul>
+                <li class="custom-li{{#completed}} completed{{/completed}}">
+                    <div class="d-flex justify-content-between align-items-center">
+                    <span>
+                       <b>{{{targetname}}}</b>
+                        (
+                        {{#completed}}{{#str}} completed , local_taskflow {{/str}}{{/completed}}
+                        {{^completed}}{{#str}} notcompleted , local_taskflow {{/str}}{{/completed}}
+                        )
+                    </span>
+                    {{#allowuploadevidence}}
+                        {{^evidence.evidence_name}}
+                        <button class="btn btn-primary btn-sm"
+                            data-action="openuserevidencemodal"
+                            data-targetid="{{targetid}}"
+                            data-assignmentid="{{assignmentid}}"
+                            data-competencyid="{{targetid}}"
+                            data-evidenceid="{{evidence.competencyevidenceid}}"
+                            data-assingmentcompetencyid="{{evidence.id}}">
+                            <i class="fas fa-upload"></i> {{#str}} uploadevidence , local_taskflow {{/str}}
+                        </button>
+                        {{/evidence.evidence_name}}
+                    {{/allowuploadevidence}}
+                    {{#evidence.evidence_name}}
+                    <div class="d-flex justify-content-between align-items-center">
+                    <button class="btn btn-primary btn-sm mr-2"
+                        data-action="openuserevidencemodal"
+                        data-targetid="{{targetid}}"
+                        data-assignmentid="{{assignmentid}}"
+                        data-competencyid="{{targetid}}"
+                        data-evidenceid="{{evidence.competencyevidenceid}}"
+                        data-statusmode="setstatus"
+                        data-assingmentcompetencyid="{{evidence.id}}">
+                        <i class="fas fa-edit"></i> {{#str}} status {{/str}}
+                    </button>
+                    <button class="btn btn-primary btn-sm mr-2"
+                        data-action="openuserevidencemodal"
+                        data-targetid="{{targetid}}"
+                        data-assignmentid="{{assignmentid}}"
+                        data-competencyid="{{targetid}}"
+                        data-evidenceid="{{evidence.competencyevidenceid}}"
+                        data-assingmentcompetencyid="{{evidence.id}}">
+                        <i class="fas fa-edit"></i> {{#str}} edit {{/str}}
+                    </button>
+                    <button class="btn btn-danger btn-sm"
+                        data-action="deleteuserevidence"
+                        data-targetid="{{targetid}}"
+                        data-assignmentid="{{assignmentid}}"
+                        data-competencyid="{{targetid}}"
+                        data-evidenceid="{{evidence.competencyevidenceid}}"
+                        data-assingmentcompetencyid="{{evidence.id}}">
+                        <i class="fas fa-trash"></i> {{#str}} delete {{/str}}
+                    </button>
+                    </div>
+                    {{/evidence.evidence_name}}
+                </div>
+                {{#evidence}}
+                <div class="card mt-3">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <h5 class="card-title mb-1">{{evidence_name}}</h5>
+                            <span class="badge bg-warning text-dark">
+                                {{ac_status}}
+                            </span>
+                        </div>
+
+                        <p class="card-text">{{{evidence_description}}}</p>
+
+                        <p class="text-muted small mb-2">
+                            <em>
+                                {{#userdate}} {{evidence_timecreated}}, {{#str}} strftimedatetime, core_langconfig {{/str}} {{/userdate}}
+                            </em>
+                        </p>
+
+                        {{#file}}
+                        <a href="{{url}}" download class="btn btn-primary" title="{{name}}">
+                            <i class="icon fa fa-download" aria-hidden="true"></i> {{name}}
+                        </a>
+                        {{/file}}
+                    </div>
+                </div>
+                {{/evidence}}
+                   </li>
+                </ul>
+            </dd>
+        </dl>
+        {{/target}}
+        {{/assignmentdata}}
+    </div>
+  </div>
+  {{#hascompetency}}
+  {{#courselist}}
+    <div class="card mb-4">
+        <div class="card-header d-flex justify-content-between align-items-center pr-4">
+        <h2>{{#str}} possiblecourses , local_taskflow {{/str}}: ({{targetname}})</h2>
+        <div class="profile-circle"><i aria-hidden="true"></i></div>
+        </div>
+        <div class="card-body">
+            <div class="course-list">
+            {{{list}}}
+            </div>
+        </div>
+    </div>
+    {{/courselist}}
+    {{^courselist}}
+    <div class="card mb-4">
+        <div class="card-header d-flex justify-content-between align-items-center pr-4">
+        <h2>{{#str}} possiblecourses , local_taskflow {{/str}}:</h2>
+        <div class="profile-circle"><i aria-hidden="true"></i></div>
+        </div>
+        <div class="card-body">
+            <p>{{#str}} nocoursesavailable , local_taskflow {{/str}}</p>
+        </div>
+    </div>
+    {{/courselist}}
+    {{/hascompetency}}
+</div>
+
+
+{{#js}}
+require(['local_taskflow/userevidence'], function(init) {
+    init.init({{userid}});
+});
+{{/js}}

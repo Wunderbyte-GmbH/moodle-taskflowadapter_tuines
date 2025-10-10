@@ -70,38 +70,18 @@ class editassignment_template_data_admin implements editassignment_template_data
                 'label' => get_string('fullname'),
                 'returnvalue' => fn($value) => format_string($value),
             ],
-            'unitid' => [
-                'label' => get_string('targets', 'local_taskflow'),
-                'returnvalue' => function ($value) use ($DB) {
-                    if (empty($value)) {
-                        return "";
-                    }
-                    $cohort = $DB->get_record('cohort', ['id' => $value], 'name');
-                    return $cohort->name ?? "";
-                },
-            ],
-            'name' => [
-                'label' => get_string('name'),
-                'returnvalue' => fn($value) => format_string($value),
-            ],
-            'ruledescription' => [
-                'label' => get_string('description'),
-                'returnvalue' => fn($value) => format_string($value),
-            ],
-            'assigneddate' => [
-                'label' => get_string('assigneddate', 'local_taskflow'),
-                'returnvalue' => fn($value) => userdate($value),
+            // Maybe needs to come back.
+            // 'assigneddate' => [
+            // 'label' => get_string('assigneddate', 'local_taskflow'),
+            // 'returnvalue' => fn($value) => userdate($value),
+            // ],
+            'duedate' => [
+                'label' => get_string('duedate', 'local_taskflow'),
+                'returnvalue' => fn($value) => date('d.m.Y', $value),
             ],
             'status' => [
                 'label' => get_string('status'),
                 'returnvalue' => fn($value) => assignment_status_facade::get_specific_names($value),
-            ],
-            'usermodified' => [
-                'label' => get_string('usermodified', 'local_taskflow'),
-                'returnvalue' => function ($value) {
-                    $user = \core_user::get_user($value);
-                    return fullname($user);
-                },
             ],
             'packages' => [
                 'label' => get_string('assignedpackages', 'taskflowadapter_tuines'),
@@ -170,6 +150,7 @@ class editassignment_template_data_admin implements editassignment_template_data
              );
             $commentform->set_data_for_dynamic_submission();
             $this->data['hascommentform'] = true;
+            $this->data['hashistory'] = true;
             $this->data['commentform'] = $commentform->render();
         }
         $this->data['id'] = $assignment->id;
