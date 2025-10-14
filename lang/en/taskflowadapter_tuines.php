@@ -42,6 +42,7 @@ $string['eventdwhfetchfailed'] = 'DWH import error';
 $string['excludestatus'] = 'Do not use status';
 $string['excludestatus_desc'] = 'Status changes to the following statuses will not be executed';
 $string['extensiontext'] = 'If there are valid and compelling reasons preventing employees from completing the standard training within the prescribed timeframe, supervisors may extend the deadline once. Providing a reason is mandatory for this extension.';
+$string['extensionuntil'] = 'Extension until: ';
 $string['function'] = 'Assign function to userprofilefield: ';
 $string['grantextension'] = "Grant Extension";
 $string['internalid'] = 'Internal ID';

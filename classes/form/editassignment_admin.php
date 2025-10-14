@@ -93,7 +93,7 @@ class editassignment_admin extends dynamic_form {
         } else {
             $extensionperiod = time();
         }
-        $mform->addElement('date_selector', 'duedate', get_string('extensionuntil', 'local_taskflow'));
+        $mform->addElement('date_selector', 'duedate', get_string('extensionuntil', 'taskflowadapter_tuines'));
         $mform->setDefault('duedate', $extensionperiod);
         // Changes should be preserved on automatic update via import.
         $mform->addElement(
@@ -103,6 +103,7 @@ class editassignment_admin extends dynamic_form {
             get_string('keepchangesonimport', 'local_taskflow')
         );
         $mform->setDefault('keepchanges', 1);
+        $mform->setType('keepchanges', PARAM_INT);
         $this->add_action_buttons(false);
     }
 
