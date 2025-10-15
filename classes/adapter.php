@@ -253,18 +253,12 @@ class adapter extends external_api_base implements external_api_interface {
      * @return bool
      */
     private function contract_ended($user) {
-        $storedenddate = $this->return_value_for_functionname(
+        $enddate = $this->return_value_for_functionname(
             taskflowadapter::TRANSLATOR_USER_CONTRACTEND,
             $user
         ) ?? '';
-        $enddate = DateTime::createFromFormat(
-            'Y-m-d',
-            $storedenddate
-        );
 
-        $this->dates_validation($enddate, $storedenddate);
-
-        $now = new DateTime();
+        $now = time();
         if (
             $enddate &&
             $enddate < $now
