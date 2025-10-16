@@ -27,6 +27,7 @@ defined('MOODLE_INTERNAL') || die();
 $string['apisettings'] = "INES API Settings";
 $string['apisettings_desc'] = "Configure taskflow key-value pairs.";
 $string['assignedpackages'] = "Assigned Packages";
+$string['cachedef_commenthistorylist'] = "Comment historylist";
 $string['change_reason_errordeclined'] = "If the deadline extension is denied, no reason may be selected.";
 $string['change_reason_errorextension'] = "If the deadline is extended, a reason must be selected.";
 $string['choose'] = "Choose...";
