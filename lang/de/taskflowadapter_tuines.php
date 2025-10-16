@@ -28,6 +28,7 @@ $string['apisettings'] = "INES API Einstellungen";
 $string['apisettings_desc'] = "Konfiguriere Taskflow-Schlüssel-Wert-Paare.";
 $string['assignedpackages'] = "Zugewiesene Pakete";
 $string['cachedef_commenthistorylist'] = "Historienliste Kommentare";
+$string['cachedef_dashboardfilter'] = "Dashboardfilter";
 $string['change_reason_errordeclined'] = "Bei Ablehnung der Fristverlängerung darf kein Grund ausgewählt werden";
 $string['change_reason_errorextension'] = "Bei Fristverlängerung muss ein Grund ausgewählt werden";
 $string['choose'] = "Wähle...";
