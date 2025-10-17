@@ -258,16 +258,13 @@ class adapter extends external_api_base implements external_api_interface {
             $user
         ) ?? '';
 
-        $enddate = DateTime::createFromFormat(
-            'Y-m-d',
-            $storedenddate
-        );
+        $enddate = userdate($storedenddate);
         $this->dates_validation($storedenddate, $enddate);
 
         $now = time();
         if (
-            $enddate &&
-            $enddate < $now
+            $storedenddate &&
+            $storedenddate < $now
         ) {
             return true;
         }
