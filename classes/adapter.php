@@ -31,6 +31,7 @@ use local_taskflow\local\assignment_process\longleave_facade;
 use local_taskflow\local\assignments\assignments_facade;
 use local_taskflow\local\supervisor\supervisor;
 use local_taskflow\plugininfo\taskflowadapter;
+use local_taskflow\task\check_supervisor;
 
 defined('MOODLE_INTERNAL') || die();
 require_once($CFG->dirroot . '/cohort/lib.php');
@@ -78,6 +79,8 @@ class adapter extends external_api_base implements external_api_interface {
             ]);
             $event->trigger();
         }
+        $checksupervisors = new check_supervisor();
+        \core\task\manager::reschedule_or_queue_adhoc_task($checksupervisors);
     }
 
     /**
