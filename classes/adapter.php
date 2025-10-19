@@ -257,8 +257,11 @@ class adapter extends external_api_base implements external_api_interface {
             taskflowadapter::TRANSLATOR_USER_CONTRACTEND,
             $user
         ) ?? '';
-
-        $enddate = userdate($storedenddate);
+        if (is_int($storedenddate)) {
+            $enddate = userdate($storedenddate);
+        } else {
+            $enddate = get_string('errordate', 'local_taskflow', $storedenddate);
+        }
         $this->dates_validation($storedenddate, $enddate);
 
         $now = time();
